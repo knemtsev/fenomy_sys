@@ -1,4 +1,9 @@
 package com.anksystems.fenomy_sys
 
-class MyProperties {
-}
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.context.properties.ConstructorBinding
+
+@ConfigurationProperties("sys")
+data class MyProperties @ConstructorBinding constructor(
+    var pgTimeout: Int = 1000,
+)
