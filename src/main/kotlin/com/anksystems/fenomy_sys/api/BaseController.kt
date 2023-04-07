@@ -48,7 +48,7 @@ open class BaseController() {
     fun handleNoToken(e: Exception): MutableMap<String, String> {
         log.e("Token not found: ${e.message}")
 
-        return composeException(401, e)
+        return composeException(400, e)
     }
 
 
