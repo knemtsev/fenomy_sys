@@ -3,6 +3,8 @@ package com.anksystems.fenomy_sys.service
 import com.anksystems.fenomy_sys.FenomySysApplication
 import com.anksystems.fenomy_sys.MyProperties
 import com.anksystems.fenomy_sys.api.request.GroupAddRequest
+import com.anksystems.fenomy_sys.api.request.GroupMemberRequest
+import com.anksystems.fenomy_sys.extensions.toJson
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.CoroutineScope
@@ -53,11 +55,29 @@ class PGService(
 
     }
 
+    private fun execQuery(query: String): String {
+        var result = ""
+        try {
+            Database.connect(ds)
+            transaction {
+                val statement = connection.prepareStatement(query, false)
+
+                val res = statement.executeQuery()
+
+                if (res.next()) {
+                    result = res.getString(1)
+                }
+
+            }
+        } catch (e: Exception) {
+            result = e.toJson(log)
+        }
+        return result
+    }
+
     fun getBlockchainPrefs(token: String): String {
-        var result = "{}"
-        Database.connect(ds)
-        transaction {
-            val query = "SELECT row_to_json(sel) FROM (\n" +
+        return execQuery(
+            "SELECT row_to_json(sel) FROM (\n" +
                     "         SELECT (substring(c.code,2,4) || '***' || substring(c.code,21,6)) as fyid, c.userid as user_id, (ext_flags & B'00000100' = B'00000100') as use_blockchain, load_blockchain, reputation FROM db.participant_ext pe\n" +
                     "            inner join db.client c on c.id=pe.id\n" +
                     "            inner join db.session s on s.userid=c.userid\n" +
@@ -65,32 +85,20 @@ class PGService(
                     "            inner join db.token t on th.id = t.header\n" +
                     "         WHERE  t.token = '$token'\n" +
                     "         ) sel;"
-            val statement = connection.prepareStatement(query, false)
+        )
 
-            val res = statement.executeQuery()
-
-            if (res.next()) {
-                result = res.getString(1)
-            }
-
-        }
-        return result
     }
 
     fun newGroup(groupAddRequest: GroupAddRequest): String {
-        var result = "?"
-        Database.connect(ds)
-        transaction {
-            val query = "select api.groups_new_group('${groupAddRequest.name}', '${groupAddRequest.description}');"
-            val statement = connection.prepareStatement(query, false)
-
-            val res = statement.executeQuery()
-
-            if (res.next()) {
-                result = res.getString(1)
-            }
-
-        }
-        return result
+        return execQuery("select api.groups_new_group('${groupAddRequest.name}', '${groupAddRequest.description?:""}');")
     }
+
+    fun addGroupMember(request: GroupMemberRequest): String {
+        return execQuery("select api.groups_add_member('${request.groupFenomyId}', '${request.userFenomyId}');")
+    }
+
+    fun delGroupMember(request: GroupMemberRequest): String {
+        return execQuery("select api.groups_del_member('${request.groupFenomyId}', '${request.userFenomyId}');")
+    }
+
 }

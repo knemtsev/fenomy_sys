@@ -38,7 +38,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
 
     val exposedVer = "0.40.1"
     implementation("org.jetbrains.exposed:exposed-core:$exposedVer")
@@ -49,8 +49,8 @@ dependencies {
     implementation("com.zaxxer:HikariCP:5.0.1")
 
     val configurationProcessor ="org.springframework.boot:spring-boot-configuration-processor:2.7.5"
-    kapt("org.springframework.boot:spring-boot-configuration-processor:2.7.5")
-    annotationProcessor(configurationProcessor)
+    kapt("org.springframework.boot:spring-boot-configuration-processor:3.0.4")
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor:3.0.4")
 
     implementation("com.impossibl.pgjdbc-ng:pgjdbc-ng:0.8.9")
 

@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class GroupAddRequest(
     @SerialName("name") val name: String,
-    @SerialName("description") val description: String,
+    @SerialName("description") val description: String? = null,
 )
