@@ -1,5 +1,6 @@
 package com.anksystems.fenomy_sys.api
 
+import com.anksystems.fenomy_sys.api.exceptions.NoAppKeyException
 import com.anksystems.fenomy_sys.api.request.GroupAddRequest
 import com.anksystems.fenomy_sys.api.request.GroupMemberRequest
 import com.anksystems.fenomy_sys.api.response.GroupAddResponse
@@ -10,17 +11,18 @@ import com.anksystems.fenomy_sys.service.PGService
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping(path = ["/sys/v1/groups"], produces = ["application/json"])
 @ResponseBody
-class GroupsController (
-    @Autowired val pgService: PGService,
-    @Autowired val log: LogService
-) {
+class GroupsController (): BaseController() {
     @PostMapping
-    fun groupsAdd(@RequestBody request: GroupAddRequest): String {
+    fun groupsAdd(@RequestBody request: GroupAddRequest,
+                  @RequestHeader("sys-key") sysKey: String?=null): String {
+        checkAuthorization(sysKey)
         return try {
             Json.encodeToString(GroupAddResponse(fenomyId = pgService.newGroup(request)))
         } catch (e: Exception) {
@@ -29,7 +31,9 @@ class GroupsController (
     }
 
     @PostMapping("/members")
-    fun membersAdd(@RequestBody request: GroupMemberRequest): String {
+    fun membersAdd(@RequestBody request: GroupMemberRequest,
+                   @RequestHeader("sys-key") sysKey: String?=null): String {
+        checkAuthorization(sysKey)
         return try {
             Json.encodeToString(ResultResponse( result = pgService.addGroupMember(request)))
         } catch (e: Exception) {
@@ -38,12 +42,15 @@ class GroupsController (
     }
 
     @DeleteMapping("/members")
-    fun membersDel(@RequestBody request: GroupMemberRequest): String {
+    fun membersDel(@RequestBody request: GroupMemberRequest,
+                   @RequestHeader("sys-key") sysKey: String?=null): String {
+        checkAuthorization(sysKey)
         return try {
             Json.encodeToString(ResultResponse( result = pgService.delGroupMember(request)))
         } catch (e: Exception) {
             e.toJson(log)
         }
     }
+
 
 }

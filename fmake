@@ -1,0 +1,37 @@
+#!/bin/bash
+
+git pull
+
+jar_name=`./gradlew -q jarPath`
+build_jar="build/libs/$jar_name"
+service_name=fenomy_sys
+service_link="/etc/init.d/$service_name"
+service_dir="/home/nemtsev/bin/$service_name"
+jar_path="$service_dir/$jar_name"
+
+if [ ! -d "$service_dir" ]
+then
+  mkdir "$service_dir"
+  mkdir "$service_dir/config"
+  cp src/main/resources/application.properties $service_dir/config
+fi
+
+set -e
+trap 'echo "FAILED"' ERR
+
+./gradlew bootJar
+
+[ ! -f "$build_jar" ] && echo "$build_jar not exists" && exit 1
+
+[ -f "$service_link" ] && sudo systemctl stop $service_name && sudo rm $service_link
+
+cp -f $build_jar $jar_path
+
+sudo ln -s $jar_path $service_link
+
+sudo systemctl daemon-reload
+
+sudo systemctl start $service_name
+
+tail -f /var/log/$service_name.log
+
