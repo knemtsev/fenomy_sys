@@ -2,6 +2,7 @@ package com.anksystems.fenomy_sys.api
 
 import com.anksystems.fenomy_sys.MyProperties
 import com.anksystems.fenomy_sys.api.exceptions.NoAppKeyException
+import com.anksystems.fenomy_sys.api.exceptions.NoTokenException
 import com.anksystems.fenomy_sys.service.LogService
 import com.anksystems.fenomy_sys.service.PGService
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,30 +28,37 @@ open class BaseController() {
     @ResponseBody
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     fun handleNoAuthorized(e: Exception): MutableMap<String, String> {
-        //throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-        val exception: MutableMap<String, String> = mutableMapOf()
-
         log.e("unauthorized Access to the API: ${e.message}")
 
-        exception["code"] = "401"
-        exception["reason"] = e.message!!
-
-        return exception
+        return composeException(401, e)
     }
 
     @ExceptionHandler(value = [HttpMessageNotReadableException::class])
     @ResponseBody
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     fun handleBodyError(e: HttpMessageNotReadableException): MutableMap<String, String> {
-        //throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+        log.e("Body error: ${e.message}")
+
+        return composeException(400, e)
+    }
+
+    @ExceptionHandler(value = [NoTokenException::class])
+    @ResponseBody
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    fun handleNoToken(e: Exception): MutableMap<String, String> {
+        log.e("Token not found: ${e.message}")
+
+        return composeException(401, e)
+    }
+
+
+    private fun composeException(code: Int, e: Exception): MutableMap<String, String> {
         val exception: MutableMap<String, String> = mutableMapOf()
 
-        log.e("unauthorized Access to the API: ${e.message}")
-
-        exception["code"] = "400"
+        exception["code"] = code.toString()
         exception["reason"] = e.message!!
 
         return exception
-    }
 
+    }
 }
