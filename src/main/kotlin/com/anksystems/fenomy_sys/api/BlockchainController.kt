@@ -26,8 +26,9 @@ class BlockchainController (
             if(res.isEmpty())
                 throw NoTokenException(token)
              res
-        } catch (e: Exception) {
-            "{"+"\"error\":"+"\""+e.message+"\"}"
+        } catch (e: NoTokenException) {
+            throw e
+        } catch (e: Exception) {            "{"+"\"error\":"+"\""+e.message+"\"}"
         }
     }
 
