@@ -7,6 +7,7 @@ import com.anksystems.fenomy_sys.service.PGService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -32,6 +33,21 @@ open class BaseController() {
         log.e("unauthorized Access to the API: ${e.message}")
 
         exception["code"] = "401"
+        exception["reason"] = e.message!!
+
+        return exception
+    }
+
+    @ExceptionHandler(value = [HttpMessageNotReadableException::class])
+    @ResponseBody
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    fun handleBodyError(e: HttpMessageNotReadableException): MutableMap<String, String> {
+        //throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+        val exception: MutableMap<String, String> = mutableMapOf()
+
+        log.e("unauthorized Access to the API: ${e.message}")
+
+        exception["code"] = "400"
         exception["reason"] = e.message!!
 
         return exception
