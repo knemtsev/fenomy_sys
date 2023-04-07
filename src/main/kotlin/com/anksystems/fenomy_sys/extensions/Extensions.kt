@@ -4,8 +4,8 @@ import com.anksystems.fenomy_sys.service.LogService
 import org.springframework.beans.factory.annotation.Autowired
 
 fun Exception.toJson(
-    @Autowired log: LogService
+    log: LogService
 ): String {
     log.e("${message}\n${stackTrace}")
-    return "{\"error\":\"$message\", \"stack\":\"${stackTrace}\"}"
+    return "{\"error\":\"$message\", \"stack\":\"${stackTrace.joinToString { it.className }}\"}"
 }
