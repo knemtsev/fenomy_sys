@@ -17,6 +17,7 @@ open class BaseController() {
     @Autowired protected lateinit var myProperties: MyProperties
 
     fun checkAuthorization(sysKey: String?) {
+        log.d("sysKey=$sysKey - config sysKey=${myProperties.sysKey}")
         if(sysKey==null || sysKey!=myProperties.sysKey)
             throw NoAppKeyException()
     }
