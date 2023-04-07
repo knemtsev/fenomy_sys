@@ -73,7 +73,7 @@ tasks.bootJar {
 }
 
 tasks.create("jarPath") {
-    println("$archivesName-$version.jar")
+    println("fenomy_sys-$version.jar")
 }
 
 val generatedVersionDir = "$buildDir/generated-version"
