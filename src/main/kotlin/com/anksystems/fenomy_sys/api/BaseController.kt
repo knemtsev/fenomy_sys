@@ -1,6 +1,7 @@
 package com.anksystems.fenomy_sys.api
 
 import com.anksystems.fenomy_sys.MyProperties
+import com.anksystems.fenomy_sys.api.exceptions.InvalidRequestParametersAtLeastException
 import com.anksystems.fenomy_sys.api.exceptions.NoAppKeyException
 import com.anksystems.fenomy_sys.api.exceptions.NoTokenException
 import com.anksystems.fenomy_sys.service.LogService
@@ -18,8 +19,10 @@ open class BaseController() {
     @Autowired protected lateinit var log: LogService
     @Autowired protected lateinit var myProperties: MyProperties
 
+    companion object {
+        const val RESULT_OK = "{\"result\":\"ok\"}"
+    }
     fun checkAuthorization(sysKey: String?) {
-        log.d("sysKey=$sysKey - config sysKey=${myProperties.sysKey}")
         if(sysKey==null || sysKey!=myProperties.sysKey)
             throw NoAppKeyException()
     }
@@ -29,28 +32,21 @@ open class BaseController() {
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     fun handleNoAuthorized(e: Exception): MutableMap<String, String> {
         log.e("unauthorized Access to the API: ${e.message}")
-
         return composeException(401, e)
     }
 
-    @ExceptionHandler(value = [HttpMessageNotReadableException::class])
+
+    @ExceptionHandler(value =
+    [InvalidRequestParametersAtLeastException::class,
+        HttpMessageNotReadableException::class,
+        NoTokenException::class
+    ])
     @ResponseBody
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    fun handleBodyError(e: HttpMessageNotReadableException): MutableMap<String, String> {
-        log.e("Body error: ${e.message}")
-
+    fun handle400Error(e: Exception): MutableMap<String, String> {
+        log.e("Error: ${e.message}")
         return composeException(400, e)
     }
-
-    @ExceptionHandler(value = [NoTokenException::class])
-    @ResponseBody
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    fun handleNoToken(e: Exception): MutableMap<String, String> {
-        log.e("Token not found: ${e.message}")
-
-        return composeException(400, e)
-    }
-
 
     private fun composeException(code: Int, e: Exception): MutableMap<String, String> {
         val exception: MutableMap<String, String> = mutableMapOf()
@@ -61,4 +57,6 @@ open class BaseController() {
         return exception
 
     }
+
+
 }
