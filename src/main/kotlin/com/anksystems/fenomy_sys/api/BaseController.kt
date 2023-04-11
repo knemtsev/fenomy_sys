@@ -4,6 +4,7 @@ import com.anksystems.fenomy_sys.MyProperties
 import com.anksystems.fenomy_sys.api.exceptions.InvalidRequestParametersAtLeastException
 import com.anksystems.fenomy_sys.api.exceptions.NoAppKeyException
 import com.anksystems.fenomy_sys.api.exceptions.NoTokenException
+import com.anksystems.fenomy_sys.api.response.ResultResponse
 import com.anksystems.fenomy_sys.service.LogService
 import com.anksystems.fenomy_sys.service.PGService
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,7 +21,7 @@ open class BaseController() {
     @Autowired protected lateinit var myProperties: MyProperties
 
     companion object {
-        const val RESULT_OK = "{\"result\":\"ok\"}"
+        val RESULT_OK = ResultResponse("ok")
     }
     fun checkAuthorization(sysKey: String?) {
         if(sysKey==null || sysKey!=myProperties.sysKey)

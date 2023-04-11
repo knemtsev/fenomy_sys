@@ -191,6 +191,19 @@ class PGService(
         }
     }
 
+    fun sendPushToGroupByTopic(groupFenomyId: String, pushData: PushData, subject: String, content: String) {
+        Database.connect(ds)
+        transaction {
+            PushTable.insert {
+                it[address] = "topic_$groupFenomyId"
+                it[PushTable.subject] = subject
+                it[PushTable.content] = content
+                it[PushTable.data] = Json.encodeToString(pushData)
+            }
+        }
+    }
+
+
     fun resultSetToJsonArray(resultSet: ResultSet): JsonArray {
 
         val result: MutableList<JsonElement> = mutableListOf()

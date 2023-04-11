@@ -69,7 +69,7 @@ class GroupsController (): BaseController() {
         @RequestBody request: SendGroupPushRequest,
         @PathVariable groupFenomyId: String,
         @RequestHeader("sys-key") sysKey: String? = null
-    ): String {
+    ): ResultResponse {
         checkAuthorization(sysKey)
 
         val pushData = PushData(
@@ -82,8 +82,13 @@ class GroupsController (): BaseController() {
             timestamp = Instant.now().toEpochMilli().toString(),
         )
 
-        pgService.sendPushToGroup(groupFenomyId, pushData, request.type+" "+request.action, "")
+        return try {
+            //pgService.sendPushToGroup(groupFenomyId, pushData, request.type+" "+request.action, "")
+            pgService.sendPushToGroupByTopic(groupFenomyId, pushData, request.type+" "+request.action, "")
+            RESULT_OK
+        } catch (e:Exception) {
+            ResultResponse(result = e.message.toString())
+        }
 
-        return RESULT_OK
     }
 }
