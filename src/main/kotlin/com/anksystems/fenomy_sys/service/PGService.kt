@@ -198,7 +198,8 @@ class PGService(
                 it[address] = "topic_$groupFenomyId"
                 it[PushTable.subject] = subject
                 it[PushTable.content] = content
-                it[PushTable.data] = Json.encodeToString(pushData)
+                it[priority] = "high"
+                it[data] = Json.encodeToString(pushData)
             }
         }
     }

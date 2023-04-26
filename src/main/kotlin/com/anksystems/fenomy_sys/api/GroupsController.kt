@@ -84,7 +84,7 @@ class GroupsController (): BaseController() {
 
         return try {
             //pgService.sendPushToGroup(groupFenomyId, pushData, request.type+" "+request.action, "")
-            pgService.sendPushToGroupByTopic(groupFenomyId, pushData, request.type+" "+request.action, "")
+            pgService.sendPushToGroupByTopic(groupFenomyId, pushData, request.type+" "+request.action, request.action)
             RESULT_OK
         } catch (e:Exception) {
             ResultResponse(result = e.message.toString())
