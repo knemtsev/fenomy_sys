@@ -195,7 +195,7 @@ class PGService(
         Database.connect(ds)
         transaction {
             PushTable.insert {
-                it[address] = "topic_$groupFenomyId"
+                it[address] = groupFenomyId
                 it[PushTable.subject] = subject
                 it[PushTable.content] = content
                 it[priority] = "high"
