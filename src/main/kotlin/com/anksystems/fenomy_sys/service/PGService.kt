@@ -199,6 +199,7 @@ class PGService(
                 it[PushTable.subject] = subject
                 it[PushTable.content] = content
                 it[priority] = "high"
+                it[collapseKey] = "groups"
                 it[data] = Json.encodeToString(pushData)
             }
         }
