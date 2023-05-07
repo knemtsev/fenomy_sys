@@ -37,6 +37,7 @@ import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.UUID
 import java.util.stream.IntStream
+import javax.lang.model.type.NullType
 
 
 @Service
@@ -175,7 +176,7 @@ class PGService(
                 addressList.add(addressSet.getString("address"))
             }
 
-            PushTable.batchInsert(addressList) {address ->
+            PushTable.batchInsert(addressList) { address ->
                 this[PushTable.address] = address
                 this[PushTable.subject] = subject
                 this[PushTable.content] = content
@@ -229,7 +230,7 @@ class PGService(
         return IntStream.range(0, numCols)
             .mapToObj { i ->
                 try {
-                    return@mapToObj md.getColumnName(i + 1)
+                    return@mapToObj md.getColumnLabel(i+1)
                 } catch (e: SQLException) {
                     e.printStackTrace()
                     return@mapToObj "?"
@@ -238,20 +239,27 @@ class PGService(
             .toList()
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     private fun rowToJsonObject(resultSet: ResultSet): JsonObject {
         return JsonObject(JsonObject(mapOf()).toMutableMap().apply {
             getColumnNames(resultSet).forEach { cn ->
                 try {
                     val obj = resultSet.getObject(cn)
-                    log.d("obj = $obj ${obj.javaClass}")
-                    when (obj) {
-                        is String -> put(cn, JsonPrimitive(resultSet.getString(cn)))
-                        is Timestamp -> put(cn, JsonPrimitive(resultSet.getTimestamp(cn).toLocalDateTime().toString()))
-                        is BigDecimal -> put(cn, JsonPrimitive(resultSet.getBigDecimal(cn) as Number))
-                        is Boolean -> put(cn, JsonPrimitive(resultSet.getBoolean(cn)))
-                        is Int -> put(cn, JsonPrimitive(resultSet.getLong(cn) as Number))
-                        else -> put(cn, JsonPrimitive(resultSet.getString(cn)))
-                    }
+                    log.d("obj = $obj ${try { obj.javaClass } catch(e: Exception){ "null"} }")
+                    if (obj != null)
+                        when (obj) {
+                            is String -> put(cn, JsonPrimitive(resultSet.getString(cn)))
+                            is Timestamp -> put(
+                                cn,
+                                JsonPrimitive(resultSet.getTimestamp(cn).toLocalDateTime().toString())
+                            )
+                            is BigDecimal -> put(cn, JsonPrimitive(resultSet.getBigDecimal(cn) as Number))
+                            is Boolean -> put(cn, JsonPrimitive(resultSet.getBoolean(cn)))
+                            is Int -> put(cn, JsonPrimitive(resultSet.getLong(cn) as Number))
+                            else -> put(cn, JsonPrimitive(resultSet.getString(cn)))
+                        }
+                    else
+                        put(cn, JsonPrimitive(null))
 
                 } catch (e: JsonMappingException) {
                     e.printStackTrace()
