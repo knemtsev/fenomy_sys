@@ -29,7 +29,7 @@ class ClientController: BaseController() {
 
         return pgService.execQueryToJsonObject(
             "select oc.id, '$fyid' as object, oc.code, oc.latitude, oc.longitude, oc.accuracy, oc.label, " +
-                    "oc.description, oc.validfromdate, oc.validtodate, oc.data \n" +
+                    "oc.description, oc.validfromdate, oc.validtodate, oc.data::jsonb as data \n" +
                     "from db.object_coordinates oc " +
                     "inner join db.client c on c.id=oc.object " +
                     "where c.code='${fyid}' order by validfromdate desc limit 1;"

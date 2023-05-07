@@ -248,7 +248,13 @@ class PGService(
                     log.d("obj = $obj ${try { obj.javaClass } catch(e: Exception){ "null"} }")
                     if (obj != null)
                         when (obj) {
-                            is String -> put(cn, JsonPrimitive(resultSet.getString(cn)))
+                            is String -> {
+                                val s = resultSet.getString(cn)
+                                if(s.startsWith("{") && s.endsWith("}")) {
+                                    put(cn, JsonObject(Json.decodeFromString(s)))
+                                } else
+                                    put(cn, JsonPrimitive(s))
+                            }
                             is Timestamp -> put(
                                 cn,
                                 JsonPrimitive(resultSet.getTimestamp(cn).toLocalDateTime().toString())
