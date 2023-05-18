@@ -15,4 +15,5 @@ data class PushData(
     @SerialName("participant")  val participant: String,
     @SerialName("timestamp")    val timestamp: String = Instant.now().toEpochMilli().toString(),
     @SerialName("title")        val title: String,
+    @SerialName("group_fenomy_id") val groupFenomyId: String
 )

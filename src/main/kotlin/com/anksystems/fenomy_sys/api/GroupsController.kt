@@ -80,6 +80,7 @@ class GroupsController (): BaseController() {
             objectX = request.objectId,
             participant = "",
             timestamp = Instant.now().toEpochMilli().toString(),
+            groupFenomyId = groupFenomyId
         )
 
         return try {
