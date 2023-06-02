@@ -4,6 +4,7 @@ import com.anksystems.fenomy_sys.MyProperties
 import com.anksystems.fenomy_sys.api.exceptions.InvalidRequestParametersAtLeastException
 import com.anksystems.fenomy_sys.api.exceptions.NoAppKeyException
 import com.anksystems.fenomy_sys.api.exceptions.NoTokenException
+import com.anksystems.fenomy_sys.api.exceptions.PostgresErrorException
 import com.anksystems.fenomy_sys.api.response.ResultResponse
 import com.anksystems.fenomy_sys.service.LogService
 import com.anksystems.fenomy_sys.service.PGService
@@ -36,7 +37,6 @@ open class BaseController() {
         return composeException(401, e)
     }
 
-
     @ExceptionHandler(value =
     [InvalidRequestParametersAtLeastException::class,
         HttpMessageNotReadableException::class,
@@ -45,6 +45,15 @@ open class BaseController() {
     @ResponseBody
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     fun handle400Error(e: Exception): MutableMap<String, String> {
+        log.e("Error: ${e.message}")
+        return composeException(400, e)
+    }
+
+    @ExceptionHandler(value =
+    [PostgresErrorException::class])
+    @ResponseBody
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    fun handlePostgresError(e: Exception): MutableMap<String, String> {
         log.e("Error: ${e.message}")
         return composeException(400, e)
     }

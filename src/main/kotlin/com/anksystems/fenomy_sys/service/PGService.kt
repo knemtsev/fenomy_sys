@@ -3,6 +3,7 @@ package com.anksystems.fenomy_sys.service
 import com.anksystems.fenomy_pushk.db.dao.PushTable
 import com.anksystems.fenomy_sys.FenomySysApplication
 import com.anksystems.fenomy_sys.MyProperties
+import com.anksystems.fenomy_sys.api.exceptions.PostgresErrorException
 import com.anksystems.fenomy_sys.api.model.PushData
 import com.anksystems.fenomy_sys.api.model.UserIdTypes
 import com.anksystems.fenomy_sys.api.request.FenomyUserIdRequest
@@ -90,6 +91,7 @@ class PGService(
             }
 
         }
+        checkPostgresError(result)
         return result
     }
 
@@ -116,18 +118,13 @@ class PGService(
 
     fun execQueryToJsonObject(query: String): String {
         var result = ""
-        try {
-            Database.connect(ds)
-            transaction {
-                val statement = connection.prepareStatement(query, false)
+        transaction(Database.connect(ds)) {
+            val statement = connection.prepareStatement(query, false)
 
-                val res = statement.executeQuery()
+            val res = statement.executeQuery()
 
-                result = resultSetRowToJsonObject(res).toString()
+            result = resultSetRowToJsonObject(res).toString()
 
-            }
-        } catch (e: Exception) {
-            result = e.toJson(log)
         }
         return result
     }
@@ -294,11 +291,28 @@ class PGService(
     }
 
     fun addGroupMember(request: GroupMemberRequest): String {
-        return execQuery("select api.groups_add_member('${screenApostrophe(request.groupFenomyId)}', '${screenApostrophe(request.userFenomyId)}');")
+        return execQuery(
+            "select api.groups_add_member('${screenApostrophe(request.groupFenomyId)}', '${
+                screenApostrophe(
+                    request.userFenomyId
+                )
+            }');"
+        )
     }
 
     fun delGroupMember(request: GroupMemberRequest): String {
-        return execQuery("select api.groups_del_member('${screenApostrophe(request.groupFenomyId)}', '${screenApostrophe(request.userFenomyId)}');")
+        return execQuery(
+            "select api.groups_del_member('${screenApostrophe(request.groupFenomyId)}', '${
+                screenApostrophe(
+                    request.userFenomyId
+                )
+            }');"
+        )
+    }
+
+    protected fun checkPostgresError(result: String) {
+        if (result.startsWith("ERR-"))
+            throw PostgresErrorException(result)
     }
 
 }
