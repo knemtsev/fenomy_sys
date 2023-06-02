@@ -25,18 +25,14 @@ import java.time.Instant
 @RestController
 @RequestMapping(path = ["/sys/v1/groups"], produces = ["application/json"])
 @ResponseBody
-class GroupsController (): BaseController() {
+class GroupsController() : BaseController() {
     @PostMapping
     fun groupsAdd(
         @RequestBody request: GroupAddRequest,
         @RequestHeader("sys-key") sysKey: String? = null
     ): String {
         checkAuthorization(sysKey)
-        return try {
-            Json.encodeToString(GroupAddResponse(fenomyId = pgService.newGroup(request)))
-        } catch (e: Exception) {
-            e.toJson(log)
-        }
+        return Json.encodeToString(GroupAddResponse(fenomyId = pgService.newGroup(request)))
     }
 
     @PostMapping("/members")
@@ -45,11 +41,7 @@ class GroupsController (): BaseController() {
         @RequestHeader("sys-key") sysKey: String? = null
     ): String {
         checkAuthorization(sysKey)
-        return try {
-            Json.encodeToString(ResultResponse(result = pgService.addGroupMember(request)))
-        } catch (e: Exception) {
-            e.toJson(log)
-        }
+        return Json.encodeToString(ResultResponse(result = pgService.addGroupMember(request)))
     }
 
     @DeleteMapping("/members")
@@ -58,13 +50,7 @@ class GroupsController (): BaseController() {
         @RequestHeader("sys-key") sysKey: String? = null
     ): String {
         checkAuthorization(sysKey)
-
-        val res= try {
-            Json.encodeToString(ResultResponse(result = pgService.delGroupMember(request)))
-        } catch (e: Exception) {
-            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,e.toJson(log))
-        }
-        return res
+        return Json.encodeToString(ResultResponse(result = pgService.delGroupMember(request)))
     }
 
     @PostMapping("/push/{groupFenomyId}")
@@ -76,7 +62,7 @@ class GroupsController (): BaseController() {
         checkAuthorization(sysKey)
 
         val pushData = PushData(
-            type = request.type+".groups",
+            type = request.type + ".groups",
             action = request.action,
             body = "",
             title = "",
@@ -90,7 +76,7 @@ class GroupsController (): BaseController() {
             //pgService.sendPushToGroup(groupFenomyId, pushData, request.type+" "+request.action, "")
             pgService.sendPushToGroupByTopic(groupFenomyId, pushData, request.type, request.action)
             RESULT_OK
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             ResultResponse(result = e.message.toString())
         }
 
