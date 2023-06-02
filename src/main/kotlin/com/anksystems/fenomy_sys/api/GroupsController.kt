@@ -61,8 +61,7 @@ class GroupsController (): BaseController() {
         return try {
             Json.encodeToString(ResultResponse(result = pgService.delGroupMember(request)))
         } catch (e: Exception) {
-            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                e.message)
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST,e.message)
         }
     }
 
