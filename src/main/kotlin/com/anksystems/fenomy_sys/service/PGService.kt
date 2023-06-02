@@ -93,6 +93,9 @@ class PGService(
         return result
     }
 
+    fun screenApostrophe(string: String): String =
+        string.replace("'", "''")
+
     fun execQueryToJsonArray(query: String): String {
         var result = ""
         try {
@@ -280,22 +283,22 @@ class PGService(
                     "            inner join db.session s on s.userid=c.userid\n" +
                     "            inner join db.token_header th on th.session=s.code\n" +
                     "            inner join db.token t on th.id = t.header\n" +
-                    "         WHERE  t.token = '$token'\n" +
+                    "         WHERE  t.token = '${screenApostrophe(token)}'\n" +
                     "         ) sel;"
         )
 
     }
 
     fun newGroup(groupAddRequest: GroupAddRequest): String {
-        return execQuery("select api.groups_new_group('${groupAddRequest.name}', ' ');")
+        return execQuery("select api.groups_new_group('${screenApostrophe(groupAddRequest.name)}', ' ');")
     }
 
     fun addGroupMember(request: GroupMemberRequest): String {
-        return execQuery("select api.groups_add_member('${request.groupFenomyId}', '${request.userFenomyId}');")
+        return execQuery("select api.groups_add_member('${screenApostrophe(request.groupFenomyId)}', '${screenApostrophe(request.userFenomyId)}');")
     }
 
     fun delGroupMember(request: GroupMemberRequest): String {
-        return execQuery("select api.groups_del_member('${request.groupFenomyId}', '${request.userFenomyId}');")
+        return execQuery("select api.groups_del_member('${screenApostrophe(request.groupFenomyId)}', '${screenApostrophe(request.userFenomyId)}');")
     }
 
 }
