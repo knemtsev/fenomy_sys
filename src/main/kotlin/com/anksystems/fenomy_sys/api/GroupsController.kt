@@ -58,6 +58,7 @@ class GroupsController (): BaseController() {
         @RequestHeader("sys-key") sysKey: String? = null
     ): String {
         checkAuthorization(sysKey)
+        log.i("${request.groupFenomyId}")
         return try {
             Json.encodeToString(ResultResponse(result = pgService.delGroupMember(request)))
         } catch (e: Exception) {
