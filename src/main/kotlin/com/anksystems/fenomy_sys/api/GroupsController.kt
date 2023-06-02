@@ -58,6 +58,7 @@ class GroupsController (): BaseController() {
         @RequestHeader("sys-key") sysKey: String? = null
     ): String {
         checkAuthorization(sysKey)
+        throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"test error")
         val res= try {
             Json.encodeToString(ResultResponse(result = pgService.delGroupMember(request)))
         } catch (e: Exception) {
