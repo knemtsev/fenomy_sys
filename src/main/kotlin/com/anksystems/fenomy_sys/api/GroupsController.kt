@@ -59,11 +59,13 @@ class GroupsController (): BaseController() {
     ): String {
         checkAuthorization(sysKey)
         log.i("${request.groupFenomyId}")
-        return try {
+        val res= try {
             Json.encodeToString(ResultResponse(result = pgService.delGroupMember(request)))
         } catch (e: Exception) {
             "ERROR "+e.message//throw ResponseStatusException(HttpStatus.BAD_REQUEST,e.message)
         }
+        log.i(res)
+        return res
     }
 
     @PostMapping("/push/{groupFenomyId}")
