@@ -17,6 +17,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import java.time.Instant
@@ -60,7 +61,8 @@ class GroupsController (): BaseController() {
         return try {
             Json.encodeToString(ResultResponse(result = pgService.delGroupMember(request)))
         } catch (e: Exception) {
-            e.toJson(log)
+            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                e.message)
         }
     }
 

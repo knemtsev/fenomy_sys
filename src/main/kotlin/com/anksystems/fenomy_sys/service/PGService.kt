@@ -80,20 +80,15 @@ class PGService(
 
     fun execQuery(query: String): String {
         var result = ""
-        try {
-            Database.connect(ds)
-            transaction {
-                val statement = connection.prepareStatement(query, false)
+        transaction(Database.connect(ds)) {
+            val statement = connection.prepareStatement(query, false)
 
-                val res = statement.executeQuery()
+            val res = statement.executeQuery()
 
-                if (res.next()) {
-                    result = res.getString(1)
-                }
-
+            if (res.next()) {
+                result = res.getString(1)
             }
-        } catch (e: Exception) {
-            result = e.toJson(log)
+
         }
         return result
     }
@@ -230,7 +225,7 @@ class PGService(
         return IntStream.range(0, numCols)
             .mapToObj { i ->
                 try {
-                    return@mapToObj md.getColumnLabel(i+1)
+                    return@mapToObj md.getColumnLabel(i + 1)
                 } catch (e: SQLException) {
                     e.printStackTrace()
                     return@mapToObj "?"
@@ -245,12 +240,12 @@ class PGService(
             getColumnNames(resultSet).forEach { cn ->
                 try {
                     val obj = resultSet.getObject(cn)
-                    log.d("obj = $obj ${try { obj.javaClass } catch(e: Exception){ "null"} }")
+                    //log.d("obj = $obj ${try { obj.javaClass } catch(e: Exception){ "null"} }")
                     if (obj != null)
                         when (obj) {
                             is String -> {
                                 val s = resultSet.getString(cn)
-                                if(s.startsWith("{") && s.endsWith("}")) {
+                                if (s.startsWith("{") && s.endsWith("}")) {
                                     put(cn, JsonObject(Json.decodeFromString(s)))
                                 } else
                                     put(cn, JsonPrimitive(s))
@@ -292,7 +287,7 @@ class PGService(
     }
 
     fun newGroup(groupAddRequest: GroupAddRequest): String {
-        return execQuery("select api.groups_new_group('${groupAddRequest.name}', '${groupAddRequest.description ?: ""}');")
+        return execQuery("select api.groups_new_group('${groupAddRequest.name}', ' ');")
     }
 
     fun addGroupMember(request: GroupMemberRequest): String {
