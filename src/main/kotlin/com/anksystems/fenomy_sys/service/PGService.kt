@@ -273,6 +273,7 @@ class PGService(
 
 
     fun getBlockchainPrefs(token: String): String {
+        log.i("get prefs $token")
         return execQuery(
             "SELECT row_to_json(sel) FROM (\n" +
                     "         SELECT (substring(c.code,2,4) || '***' || substring(c.code,21,6)) as fyid, c.userid as user_id, (ext_flags & B'00000100' = B'00000100') as use_blockchain, load_blockchain, reputation FROM db.participant_ext pe\n" +
@@ -293,10 +294,7 @@ class PGService(
     fun addGroupMember(request: GroupMemberRequest): String {
         return execQuery(
             "select api.groups_add_member('${screenApostrophe(request.groupFenomyId)}', '${
-                screenApostrophe(
-                    request.userFenomyId
-                )
-            }');"
+                screenApostrophe(request.userFenomyId)}');"
         )
     }
 
