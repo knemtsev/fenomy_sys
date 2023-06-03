@@ -284,6 +284,7 @@ class PGService(
                     "         WHERE  t.token = '${screenApostrophe(token)}'\n" +
                     "         ) sel;"
         )
+        log.i("get prefs res = $res")
         return res
     }
 
