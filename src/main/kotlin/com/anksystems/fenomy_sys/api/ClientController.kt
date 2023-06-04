@@ -40,7 +40,7 @@ class ClientController: BaseController() {
         )
         val responseHeaders = HttpHeaders()
         responseHeaders.set("Access-Control-Request-Headers","*")
-        responseHeaders.set("Access-Control-Allow-Origin", "*");
+        responseHeaders.set("Access-Control-Allow-Origin", "https://localhost:3000");
         responseHeaders.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         responseHeaders.set("Access-Control-Max-Age", "3600");
         responseHeaders.set("Access-Control-Allow-Headers", "content-type");
