@@ -7,6 +7,7 @@ import java.lang.reflect.Type
 @RestController
 
 @RequestMapping(path = ["/sys/v1/client"], produces = ["application/json"])
+@CrossOrigin(origins = ["https://localhost:3000"])
 @ResponseBody
 class ClientController: BaseController() {
     @GetMapping(path = ["/data"])
@@ -22,7 +23,6 @@ class ClientController: BaseController() {
     }
 
     @GetMapping(path = ["/location/last"])
-    @CrossOrigin(origins = ["*"])
     fun getLocation(
         @RequestParam("fyid") fyid: String,
         @RequestHeader("sys-key") sysKey: String? = null
