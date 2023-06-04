@@ -26,25 +26,25 @@ class FenomySysApplication {
     fun getVersion() : String = versionProperties.getProperty("version") ?: "no version"
 
 }
-/*
 
-@Configuration
-class CorsConfig {
-    @Bean
-    fun corsConfigurer(): WebMvcConfigurer {
-        return object : WebMvcConfigurer {
-            override fun addCorsMappings(registry: CorsRegistry) {
-                registry.addMapping("/sys/v1/client/**")
-                    .allowedOrigins("https://localhost:3000")
-                    .allowedMethods("GET", "POST", "OPTIONS")
-                    .allowedHeaders("Content-Type", "Access-Control-Allow-Headers")
-                    .allowCredentials(true)
-                    .maxAge(3600)
-            }
-        }
-    }
-}
-*/
+
+//@Configuration
+//class CorsConfig {
+//    @Bean
+//    fun corsConfigurer(): WebMvcConfigurer {
+//        return object : WebMvcConfigurer {
+//            override fun addCorsMappings(registry: CorsRegistry) {
+//                registry.addMapping("/sys/v1/client/**")
+//                    .allowedOrigins("https://localhost:3000")
+//                    .allowedMethods("GET", "POST", "OPTIONS")
+//                    .allowedHeaders("Content-Type", "Access-Control-Allow-Headers")
+//                    .allowCredentials(true)
+//                    .maxAge(3600)
+//            }
+//        }
+//    }
+//}
+
 
 /*
 @EnableWebSecurity
