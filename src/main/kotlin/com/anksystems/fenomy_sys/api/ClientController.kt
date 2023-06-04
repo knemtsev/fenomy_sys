@@ -43,8 +43,7 @@ class ClientController: BaseController() {
         responseHeaders.set("Access-Control-Allow-Origin", "*");
         responseHeaders.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         responseHeaders.set("Access-Control-Max-Age", "3600");
-        responseHeaders.set("Access-Control-Allow-Headers", "authorization, content-type, xsrf-token");
-        responseHeaders.set("Access-Control-Expose-Headers", "xsrf-token");
+        responseHeaders.set("Access-Control-Allow-Headers", "content-type");
         return ResponseEntity.ok()
             .headers(responseHeaders)
             .body(res)
