@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*
 import java.lang.reflect.Type
 
 @RestController
-@CrossOrigin(originPatterns = ["*"])
+@CrossOrigin("*")
 @RequestMapping(path = ["/sys/v1/client"], produces = ["application/json"])
 @ResponseBody
 class ClientController: BaseController() {
