@@ -4,16 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
-import org.springframework.context.annotation.Bean
-import org.springframework.security.config.Customizer
-import org.springframework.security.config.annotation.web.HttpSecurityDsl
-import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.web.SecurityFilterChain
 import org.springframework.stereotype.Component
-import org.springframework.web.cors.CorsConfiguration
 import java.util.*
-import java.util.List
 
 
 @EnableConfigurationProperties(MyProperties::class)
