@@ -40,11 +40,12 @@ class ClientController: BaseController() {
                     "where c.code='${fyid}' order by validfromdate desc limit 1;"
         )
         val responseHeaders = HttpHeaders()
-        responseHeaders.set(
-            "Access-Control-Request-Headers",
-            "*"
-        )
-
+        responseHeaders.set("Access-Control-Request-Headers","*")
+        responseHeaders.set("Access-Control-Allow-Origin", "*");
+        responseHeaders.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        responseHeaders.set("Access-Control-Max-Age", "3600");
+        responseHeaders.set("Access-Control-Allow-Headers", "authorization, content-type, xsrf-token");
+        responseHeaders.set("Access-Control-Expose-Headers", "xsrf-token");
         return ResponseEntity.ok()
             .headers(responseHeaders)
             .body(res)
