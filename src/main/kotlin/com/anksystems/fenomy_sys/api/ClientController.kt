@@ -2,8 +2,10 @@ package com.anksystems.fenomy_sys.api
 
 import com.anksystems.fenomy_sys.api.request.FenomyUserIdRequest
 import org.springframework.web.bind.annotation.*
+import java.lang.reflect.Type
 
 @RestController
+@CrossOrigin(originPatterns = ["*"])
 @RequestMapping(path = ["/sys/v1/client"], produces = ["application/json"])
 @ResponseBody
 class ClientController: BaseController() {
@@ -20,6 +22,7 @@ class ClientController: BaseController() {
     }
 
     @GetMapping(path = ["/location/last"])
+    @ResponseBody
     fun getLocation(
         @RequestParam("fyid") fyid: String,
         @RequestHeader("sys-key") sysKey: String? = null
