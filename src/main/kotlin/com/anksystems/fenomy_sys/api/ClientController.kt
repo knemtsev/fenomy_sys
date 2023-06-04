@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*
 import java.lang.reflect.Type
 
 @RestController
-@CrossOrigin("*")
+
 @RequestMapping(path = ["/sys/v1/client"], produces = ["application/json"])
 @ResponseBody
 class ClientController: BaseController() {
@@ -22,7 +22,7 @@ class ClientController: BaseController() {
     }
 
     @GetMapping(path = ["/location/last"])
-    @ResponseBody
+    @CrossOrigin(origins = ["*"])
     fun getLocation(
         @RequestParam("fyid") fyid: String,
         @RequestHeader("sys-key") sysKey: String? = null
