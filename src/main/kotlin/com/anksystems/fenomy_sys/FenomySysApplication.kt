@@ -26,6 +26,7 @@ class FenomySysApplication {
     fun getVersion() : String = versionProperties.getProperty("version") ?: "no version"
 
 }
+/*
 
 @Configuration
 class CorsConfig {
@@ -43,6 +44,8 @@ class CorsConfig {
         }
     }
 }
+*/
+
 /*
 @EnableWebSecurity
 class SecurityConfig {
