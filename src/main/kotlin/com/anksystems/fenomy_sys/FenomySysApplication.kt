@@ -31,6 +31,7 @@ class FenomySysApplication {
 
 }
 
+/*
 @EnableWebSecurity
 class SecurityConfig {
     @Bean
@@ -51,6 +52,7 @@ class SecurityConfig {
             .build()
     }
 }
+*/
 
 
 fun main(args: Array<String>) {
