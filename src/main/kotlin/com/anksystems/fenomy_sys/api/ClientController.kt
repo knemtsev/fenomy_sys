@@ -6,7 +6,8 @@ import java.lang.reflect.Type
 
 @RestController
 
-@RequestMapping(path = ["/sys/v1/client"], produces = ["application/json"])
+@RequestMapping(path = ["/sys/v1/client"], produces = ["application/json"],
+    headers = ["Access-Control-Request-Headers=*"])
 @ResponseBody
 @CrossOrigin(origins = ["https://localhost:3000"], maxAge = 3600)
 class ClientController: BaseController() {
