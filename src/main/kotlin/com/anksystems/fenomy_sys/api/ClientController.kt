@@ -8,6 +8,7 @@ import java.lang.reflect.Type
 
 @RequestMapping(path = ["/sys/v1/client"], produces = ["application/json"])
 @ResponseBody
+@CrossOrigin(origins = ["https://localhost:3000","*"], maxAge = 3600)
 class ClientController: BaseController() {
     @GetMapping(path = ["/data"])
     fun getAvatar(

@@ -4,7 +4,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
+import org.springframework.web.servlet.config.annotation.CorsRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import java.util.*
 
 
@@ -23,6 +27,23 @@ class FenomySysApplication {
 
 }
 
+@Configuration
+class CorsConfig {
+    @Bean
+    fun corsConfigurer(): WebMvcConfigurer {
+        return object : WebMvcConfigurer {
+            override fun addCorsMappings(registry: CorsRegistry) {
+                registry.addMapping("/sys/v1/client/**")
+                    .allowedOrigins("*")
+                    .allowedMethods("GET", "POST", "OPTIONS")
+                    .allowedHeaders("*")
+                    .exposedHeaders("*")
+                    .allowCredentials(true)
+                    .maxAge(3600)
+            }
+        }
+    }
+}
 /*
 @EnableWebSecurity
 class SecurityConfig {
