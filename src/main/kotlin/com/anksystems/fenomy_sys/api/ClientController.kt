@@ -64,7 +64,8 @@ class ClientController : BaseController() {
         rule: String? = null,
         fields: String = "c.code as fyid, family_name as lastname, given_name as firstname, p.picture as avatar, u.email as email, u.phone as phone",
     ): String {
-        return if (groupFyid != null)
+        log.d("GET_DATA $groupFyid")
+        val res = if (groupFyid != null)
             pgService.execQueryToJsonArray(
                 "select $fields " +
                         "from db.member_group mg " +
@@ -92,6 +93,8 @@ class ClientController : BaseController() {
         else
             throw InvalidRequestParametersAtLeastException("fyid, group_fyid")
 
+        log.d("DATA = $res")
+        return res;
     }
 
     @GetMapping(path = ["/location/last"])
@@ -131,9 +134,11 @@ class ClientController : BaseController() {
         afterTime: ZonedDateTime? = null,
         ): String {
 
+        log.d("GET_LOCATION $groupFyid")
+
         val fields = "oc.id, c.code as object, oc.code, oc.latitude, oc.longitude, oc.accuracy, oc.label, oc.description, oc.validfromdate, oc.validtodate, oc.data::jsonb as data"
 
-        return if(groupFyid!=null) {
+        val res = if(groupFyid!=null) {
             pgService.execQueryToJsonArray(
                 "select $fields " +
                         "from db.member_group mg " +
@@ -155,6 +160,8 @@ class ClientController : BaseController() {
         else
             throw InvalidRequestParametersAtLeastException("fyid, group_fyid")
 
+        log.d("GET_LOCATION = $res")
+        return res
     }
 
 }
