@@ -19,8 +19,12 @@ class ClientController: BaseController() {
         checkAuthorization(sysKey)
 
         return pgService.execQueryToJsonObject(
-            "select family_name as lastname, given_name as firstname, p.picture as avatar from db.profile p\n" +
-                "inner join db.client c on c.userid=p.userid where c.code='$fyid';")
+            "select family_name as lastname, given_name as firstname, p.picture as avatar, " +
+                    "u.email as email, u.phone as phone " +
+                    "from db.profile p\n" +
+                "inner join db.client c on c.userid=p.userid " +
+                    "inner join db.user u on u.id=p.userid" +
+                    "where c.code='$fyid';")
     }
 
     @GetMapping(path = ["/location/last"])
@@ -39,11 +43,11 @@ class ClientController: BaseController() {
                     "where c.code='${fyid}' order by validfromdate desc limit 1;"
         )
         val responseHeaders = HttpHeaders()
-        responseHeaders.set("Access-Control-Request-Headers","*")
-        responseHeaders.set("Access-Control-Allow-Origin", "https://localhost:3000");
-        responseHeaders.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        responseHeaders.set("Access-Control-Max-Age", "3600");
-        responseHeaders.set("Access-Control-Allow-Headers", "content-type");
+//        responseHeaders.set("Access-Control-Request-Headers","*")
+//        responseHeaders.set("Access-Control-Allow-Origin", "https://localhost:3000");
+//        responseHeaders.set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
+//        responseHeaders.set("Access-Control-Max-Age", "3600");
+//        responseHeaders.set("Access-Control-Allow-Headers", "content-type");
         return ResponseEntity.ok()
             .headers(responseHeaders)
             .body(res)
