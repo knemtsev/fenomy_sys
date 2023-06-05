@@ -100,18 +100,13 @@ class PGService(
 
     fun execQueryToJsonArray(query: String): String {
         var result = ""
-        try {
-            Database.connect(ds)
-            transaction {
-                val statement = connection.prepareStatement(query, false)
+        transaction(Database.connect(ds)) {
+            val statement = connection.prepareStatement(query, false)
 
-                val res = statement.executeQuery()
+            val res = statement.executeQuery()
 
-                result = resultSetToJsonArray(res).toString()
+            result = resultSetToJsonArray(res).toString()
 
-            }
-        } catch (e: Exception) {
-            result = e.toJson(log)
         }
         return result
     }
@@ -274,7 +269,7 @@ class PGService(
 
     fun getBlockchainPrefs(token: String): String {
         log.d("get prefs $token")
-        val res =execQuery(
+        val res = execQuery(
             "SELECT row_to_json(sel) FROM (\n" +
                     "         SELECT (substring(c.code,2,4) || '***' || substring(c.code,21,6)) as fyid, c.userid as user_id, (ext_flags & B'00000100' = B'00000100') as use_blockchain, load_blockchain, reputation FROM db.participant_ext pe\n" +
                     "            inner join db.client c on c.id=pe.id\n" +
@@ -295,7 +290,8 @@ class PGService(
     fun addGroupMember(request: GroupMemberRequest): String {
         return execQuery(
             "select api.groups_add_member('${screenApostrophe(request.groupFenomyId)}', '${
-                screenApostrophe(request.userFenomyId)}');"
+                screenApostrophe(request.userFenomyId)
+            }');"
         )
     }
 

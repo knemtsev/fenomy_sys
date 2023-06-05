@@ -1,30 +1,46 @@
 package com.anksystems.fenomy_sys.api
 
+import com.anksystems.fenomy_sys.api.exceptions.InvalidRequestParametersAtLeastException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-
 @RequestMapping(
     path = ["/sys/v1/client"], produces = ["application/json"],
 )
 @ResponseBody
-class ClientController: BaseController() {
+class ClientController : BaseController() {
     @GetMapping(path = ["/data"])
     fun getAvatar(
-        @RequestParam("fyid") fyid: String,
+        @RequestParam("fyid") fyid: String?,
+        @RequestParam("group_fyid") groupFyid: String?,
         @RequestHeader("sys-key") sysKey: String? = null
     ): String {
         checkAuthorization(sysKey)
 
-        return pgService.execQueryToJsonObject(
-            "select family_name as lastname, given_name as firstname, p.picture as avatar, " +
-                    "u.email as email, u.phone as phone " +
-                    "from db.profile p\n" +
-                "inner join db.client c on c.userid=p.userid " +
-                    "inner join db.user u on u.id=p.userid" +
-                    "where c.code='$fyid';")
+        val fields = "family_name as lastname, given_name as firstname, p.picture as avatar, u.email as email, u.phone as phone"
+
+        return if (groupFyid != null)
+            pgService.execQueryToJsonArray(
+                "select $fields " +
+                        "from db.member_group mg " +
+                        "inner join db.profile p on mg.member=p.userid " +
+                        "inner join db.client c on c.userid=p.userid " +
+                        "inner join db.user u on u.id=p.userid " +
+                        "inner join db.user ug on ug.id=mg.userid " +
+                        "where ug.username='$groupFyid';"
+            )
+        else if (fyid != null)
+            pgService.execQueryToJsonObject(
+                "select $fields " +
+                        "from db.profile p\n" +
+                        "inner join db.client c on c.userid=p.userid " +
+                        "inner join db.user u on u.id=p.userid " +
+                        "where c.code='$fyid';"
+            )
+        else
+            throw InvalidRequestParametersAtLeastException("fyid, group_fyid")
     }
 
     @GetMapping(path = ["/location/last"])
