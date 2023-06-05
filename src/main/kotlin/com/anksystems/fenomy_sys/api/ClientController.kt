@@ -46,29 +46,32 @@ class ClientController : BaseController() {
     @GetMapping(path = ["/location/last"])
     fun getLocation(
         @RequestParam("fyid") fyid: String,
+        @RequestParam("group_fyid") groupFyid: String?,
         @RequestHeader("sys-key") sysKey: String? = null
-    ): ResponseEntity<String> {
+    ): String {
 
         checkAuthorization(sysKey)
 
-        val res = pgService.execQueryToJsonObject(
-            "select oc.id, '$fyid' as object, oc.code, oc.latitude, oc.longitude, oc.accuracy, oc.label, " +
-                    "oc.description, oc.validfromdate, oc.validtodate, oc.data::jsonb as data \n" +
+        val fields = "oc.id, c.code as object, oc.code, oc.latitude, oc.longitude, oc.accuracy, oc.label, oc.description, oc.validfromdate, oc.validtodate, oc.data::jsonb as data"
+
+        return if(groupFyid!=null)
+                pgService.execQueryToJsonArray(
+                    "select $fields " +
+                            "from db.member_group mg " +
+                            "inner join db.client c on c.userid=mg.member " +
+                            "inner join db.object_coordinates oc on oc.object=c.id and oc.validtodate>now() " +
+                            "inner join db.user ug on ug.id=mg.userid " +
+                            "where ug.username='$groupFyid';")
+            else if(fyid!=null)
+                pgService.execQueryToJsonObject(
+            "select $fields " +
                     "from db.object_coordinates oc " +
                     "inner join db.client c on c.id=oc.object " +
-                    "where c.code='${fyid}' order by validfromdate desc limit 1;"
-        )
-        val responseHeaders = HttpHeaders()
-//        responseHeaders.set("Access-Control-Request-Headers","*")
-//        responseHeaders.set("Access-Control-Allow-Origin", "https://localhost:3000");
-//        responseHeaders.set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
-//        responseHeaders.set("Access-Control-Max-Age", "3600");
-//        responseHeaders.set("Access-Control-Allow-Headers", "content-type");
-        return ResponseEntity.ok()
-            .headers(responseHeaders)
-            .body(res)
-    }
+                    "where c.code='${fyid}' order by validfromdate desc limit 1;")
+            else
+                throw InvalidRequestParametersAtLeastException("fyid, group_fyid")
 
+    }
 
 }
 
