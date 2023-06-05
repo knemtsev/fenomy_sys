@@ -45,7 +45,7 @@ class ClientController : BaseController() {
 
     @GetMapping(path = ["/location/last"])
     fun getLocation(
-        @RequestParam("fyid") fyid: String,
+        @RequestParam("fyid") fyid: String?,
         @RequestParam("group_fyid") groupFyid: String?,
         @RequestHeader("sys-key") sysKey: String? = null
     ): String {
