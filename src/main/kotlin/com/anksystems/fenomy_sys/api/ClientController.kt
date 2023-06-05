@@ -112,7 +112,7 @@ class ClientController : BaseController() {
         return getLocation(fyid, groupFyid, offset, limit, BaseRequest.toTime(after))
     }
 
-    @CrossOrigin(origins = ["https://localhost:3000"])
+    @CrossOrigin(/*origins = ["https://localhost:3000"]*/)
     @PostMapping(path = ["/location/last"])
     fun getLocation(
         @RequestBody groupRequest: GroupRequest,
