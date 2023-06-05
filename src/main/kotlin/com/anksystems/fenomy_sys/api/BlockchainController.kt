@@ -23,6 +23,7 @@ class BlockchainController (
         checkAuthorization(sysKey)
         return try {
             val res = pgService.getBlockchainPrefs(token)
+            log.d("blockchain $res $token")
             if(res.isEmpty())
                 throw NoTokenException(token)
              res
