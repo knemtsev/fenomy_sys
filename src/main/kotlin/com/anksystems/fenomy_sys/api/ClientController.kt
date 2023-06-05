@@ -50,6 +50,7 @@ class ClientController : BaseController() {
 
         return getData(groupRequest.fyid, groupRequest.groupFyid,
             groupRequest.offset, groupRequest.limit, groupRequest.afterToTime(),
+            "and avatar is not null ",
             "c.code as fyid, p.picture as avatar")
     }
 
@@ -60,6 +61,7 @@ class ClientController : BaseController() {
         offset: Int? = null,
         limit: Int? = null,
         afterTime: ZonedDateTime? = null,
+        rule: String? = null,
         fields: String = "c.code as fyid, family_name as lastname, given_name as firstname, p.picture as avatar, u.email as email, u.phone as phone",
     ): String {
         return if (groupFyid != null)
@@ -72,6 +74,7 @@ class ClientController : BaseController() {
                         "inner join db.user ug on ug.id=mg.userid " +
                         "inner join db.object o on o.id=c.id " +
                         "where ug.username='$groupFyid' " +
+                        (rule?.let { it } ?: " ") +
                         (if(afterTime!=null) " and o.udate>'${afterTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)}'" else " ") +
                         (if(limit!=null) "limit $limit " else " ") +
                         (if(offset!=null) "offset $offset " else " ") +
@@ -83,7 +86,8 @@ class ClientController : BaseController() {
                         "from db.profile p\n" +
                         "inner join db.client c on c.userid=p.userid " +
                         "inner join db.user u on u.id=p.userid " +
-                        "where c.code='$fyid';"
+                        "where c.code='$fyid'" +
+                        ";"
             )
         else
             throw InvalidRequestParametersAtLeastException("fyid, group_fyid")
