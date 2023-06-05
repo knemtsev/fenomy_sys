@@ -1,8 +1,6 @@
 package com.anksystems.fenomy_sys.api
 
 import com.anksystems.fenomy_sys.api.exceptions.InvalidRequestParametersAtLeastException
-import org.springframework.http.HttpHeaders
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -15,6 +13,8 @@ class ClientController : BaseController() {
     fun getAvatar(
         @RequestParam("fyid") fyid: String?,
         @RequestParam("group_fyid") groupFyid: String?,
+        @RequestParam("offset") offset: Int?,
+        @RequestParam("limit") limit: Int?,
         @RequestHeader("sys-key") sysKey: String? = null
     ): String {
         checkAuthorization(sysKey)
@@ -29,7 +29,10 @@ class ClientController : BaseController() {
                         "inner join db.client c on c.userid=p.userid " +
                         "inner join db.user u on u.id=p.userid " +
                         "inner join db.user ug on ug.id=mg.userid " +
-                        "where ug.username='$groupFyid';"
+                        "where ug.username='$groupFyid' " +
+                        (if(limit!=null) "limit $limit " else " ") +
+                        (if(offset!=null) "offset $offset " else " ") +
+                        ";"
             )
         else if (fyid != null)
             pgService.execQueryToJsonObject(
@@ -47,6 +50,8 @@ class ClientController : BaseController() {
     fun getLocation(
         @RequestParam("fyid") fyid: String?,
         @RequestParam("group_fyid") groupFyid: String?,
+        @RequestParam("offset") offset: Int?,
+        @RequestParam("limit") limit: Int?,
         @RequestHeader("sys-key") sysKey: String? = null
     ): String {
 
@@ -61,7 +66,10 @@ class ClientController : BaseController() {
                             "inner join db.client c on c.userid=mg.member " +
                             "inner join db.object_coordinates oc on oc.object=c.id and oc.validtodate>now() " +
                             "inner join db.user ug on ug.id=mg.userid " +
-                            "where ug.username='$groupFyid';")
+                            "where ug.username='$groupFyid'" +
+                            (if(limit!=null) "limit $limit " else " ") +
+                            (if(offset!=null) "offset $offset " else " ") +
+                            ";")
             else if(fyid!=null)
                 pgService.execQueryToJsonObject(
             "select $fields " +
