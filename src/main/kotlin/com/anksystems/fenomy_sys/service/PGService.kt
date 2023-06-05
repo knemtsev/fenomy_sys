@@ -268,7 +268,7 @@ class PGService(
 
 
     fun getBlockchainPrefs(token: String): String {
-        log.d("get prefs $token")
+//        log.d("get prefs $token")
         val res = execQuery(
             "SELECT row_to_json(sel) FROM (\n" +
                     "         SELECT (substring(c.code,2,4) || '***' || substring(c.code,21,6)) as fyid, c.userid as user_id, (ext_flags & B'00000100' = B'00000100') as use_blockchain, load_blockchain, reputation FROM db.participant_ext pe\n" +
@@ -279,7 +279,7 @@ class PGService(
                     "         WHERE  t.token = '${screenApostrophe(token)}'\n" +
                     "         ) sel;"
         )
-        log.d("get prefs res = $res")
+//        log.d("get prefs res = $res")
         return res
     }
 
