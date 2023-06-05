@@ -7,6 +7,7 @@ import com.anksystems.fenomy_sys.api.request.GroupRequest
 import org.springframework.web.bind.annotation.*
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+@CrossOrigin(origins = ["https://localhost:3000"], allowedHeaders = ["content-type","sys-key"])
 @RestController
 @RequestMapping(
     path = ["/sys/v1/client"], produces = ["application/json"],
@@ -23,8 +24,6 @@ class ClientController : BaseController() {
         @RequestHeader("sys-key") sysKey: String? = null
     ): String {
         checkAuthorization(sysKey)
-
-        val fields = "c.code as fyid, family_name as lastname, given_name as firstname, p.picture as avatar, u.email as email, u.phone as phone"
 
         return getData(fyid, groupFyid, offset, limit, BaseRequest.toTime(after))
     }
@@ -112,7 +111,7 @@ class ClientController : BaseController() {
         return getLocation(fyid, groupFyid, offset, limit, BaseRequest.toTime(after))
     }
 
-    //@CrossOrigin(/*origins = ["https://localhost:3000"]*/)
+    @CrossOrigin(/*origins = ["https://localhost:3000"]*/)
     @PostMapping(path = ["/location/last"])
     fun getLocation(
         @RequestBody groupRequest: GroupRequest,
