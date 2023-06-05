@@ -7,7 +7,6 @@ import com.anksystems.fenomy_sys.api.request.GroupRequest
 import org.springframework.web.bind.annotation.*
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-@CrossOrigin(origins = ["https://localhost:3000"])
 @RestController
 @RequestMapping(
     path = ["/sys/v1/client"], produces = ["application/json"],
@@ -113,6 +112,7 @@ class ClientController : BaseController() {
         return getLocation(fyid, groupFyid, offset, limit, BaseRequest.toTime(after))
     }
 
+    @CrossOrigin(origins = ["https://localhost:3000"])
     @PostMapping(path = ["/location/last"])
     fun getLocation(
         @RequestBody groupRequest: GroupRequest,
