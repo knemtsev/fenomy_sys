@@ -50,7 +50,7 @@ class ClientController : BaseController() {
 
         return getData(groupRequest.fyid, groupRequest.groupFyid,
             groupRequest.offset, groupRequest.limit, groupRequest.afterToTime(),
-            "and avatar is not null ",
+            "and p.picture is not null ",
             "c.code as fyid, p.picture as avatar")
     }
 
