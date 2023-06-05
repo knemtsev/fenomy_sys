@@ -1,10 +1,7 @@
 package com.anksystems.fenomy_sys.api
 
 import com.anksystems.fenomy_sys.MyProperties
-import com.anksystems.fenomy_sys.api.exceptions.InvalidRequestParametersAtLeastException
-import com.anksystems.fenomy_sys.api.exceptions.NoAppKeyException
-import com.anksystems.fenomy_sys.api.exceptions.NoTokenException
-import com.anksystems.fenomy_sys.api.exceptions.PostgresErrorException
+import com.anksystems.fenomy_sys.api.exceptions.*
 import com.anksystems.fenomy_sys.api.response.ResultResponse
 import com.anksystems.fenomy_sys.service.LogService
 import com.anksystems.fenomy_sys.service.PGService
@@ -40,7 +37,8 @@ open class BaseController() {
     @ExceptionHandler(value =
     [InvalidRequestParametersAtLeastException::class,
         HttpMessageNotReadableException::class,
-        NoTokenException::class
+        NoTokenException::class,
+        InvalidRequestParameterException::class
     ])
     @ResponseBody
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)

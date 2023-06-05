@@ -1,7 +1,9 @@
 package com.anksystems.fenomy_sys.api
 
+import com.anksystems.fenomy_sys.api.exceptions.InvalidRequestParameterException
 import com.anksystems.fenomy_sys.api.exceptions.InvalidRequestParametersAtLeastException
 import org.springframework.web.bind.annotation.*
+import java.time.ZonedDateTime
 
 @RestController
 @RequestMapping(
@@ -52,6 +54,7 @@ class ClientController : BaseController() {
         @RequestParam("group_fyid") groupFyid: String?,
         @RequestParam("offset") offset: Int?,
         @RequestParam("limit") limit: Int?,
+        @RequestParam("after") after: String?,
         @RequestHeader("sys-key") sysKey: String? = null
     ): String {
 
@@ -59,18 +62,28 @@ class ClientController : BaseController() {
 
         val fields = "oc.id, c.code as object, oc.code, oc.latitude, oc.longitude, oc.accuracy, oc.label, oc.description, oc.validfromdate, oc.validtodate, oc.data::jsonb as data"
 
-        return if(groupFyid!=null)
-                pgService.execQueryToJsonArray(
-                    "select $fields " +
-                            "from db.member_group mg " +
-                            "inner join db.client c on c.userid=mg.member " +
-                            "inner join db.object_coordinates oc on oc.object=c.id and oc.validtodate>now() " +
-                            "inner join db.user ug on ug.id=mg.userid " +
-                            "where ug.username='$groupFyid'" +
-                            (if(limit!=null) "limit $limit " else " ") +
-                            (if(offset!=null) "offset $offset " else " ") +
-                            ";")
-            else if(fyid!=null)
+        return if(groupFyid!=null) {
+            var afterTime: ZonedDateTime? = null
+            if (after != null) {
+                try {
+                    afterTime = ZonedDateTime.parse(after)
+                } catch (e: Exception) {
+                    throw InvalidRequestParameterException("after", e.message)
+                }
+            }
+            pgService.execQueryToJsonArray(
+                "select $fields " +
+                        "from db.member_group mg " +
+                        "inner join db.client c on c.userid=mg.member " +
+                        "inner join db.object_coordinates oc on oc.object=c.id and oc.validtodate>now() " +
+                        "inner join db.user ug on ug.id=mg.userid " +
+                        "where ug.username='$groupFyid'" +
+                        (if(afterTime!=null) "and oc.validfromdate>'${afterTime}' " else " ") +
+                        (if (limit != null) "limit $limit " else " ") +
+                        (if (offset != null) "offset $offset " else " ") +
+                        ";"
+            )
+        } else if(fyid!=null)
                 pgService.execQueryToJsonObject(
             "select $fields " +
                     "from db.object_coordinates oc " +
