@@ -7,7 +7,7 @@ import com.anksystems.fenomy_sys.api.request.GroupRequest
 import org.springframework.web.bind.annotation.*
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-@CrossOrigin(origins = ["https://localhost:3000"], allowedHeaders = ["content-type","sys-key"])
+@CrossOrigin(origins = ["https://localhost:3000", "https://fenomy.com"], allowedHeaders = ["content-type","sys-key"])
 @RestController
 @RequestMapping(
     path = ["/sys/v1/client"], produces = ["application/json"],
