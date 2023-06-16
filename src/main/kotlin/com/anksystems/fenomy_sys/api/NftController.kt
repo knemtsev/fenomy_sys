@@ -1,6 +1,8 @@
 package com.anksystems.fenomy_sys.api
 
+import com.anksystems.fenomy_sys.api.exceptions.InvalidRequestParameterException
 import com.anksystems.fenomy_sys.api.exceptions.InvalidRequestParametersAtLeastException
+import com.anksystems.fenomy_sys.api.exceptions.NoRowAffected
 import com.anksystems.fenomy_sys.api.request.SetNftAlgoRequest
 import com.anksystems.fenomy_sys.api.response.ResultResponse
 import org.springframework.web.bind.annotation.*
@@ -25,6 +27,8 @@ class NftController: BaseController() {
                 "where id='${setNftAlgoRequest.id}';")
 
         log.d("setNftAlgo res = $res")
+
+        if(res==0) throw NoRowAffected()
 
         return RESULT_OK
     }

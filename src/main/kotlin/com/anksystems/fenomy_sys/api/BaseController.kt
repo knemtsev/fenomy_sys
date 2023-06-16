@@ -50,7 +50,8 @@ open class BaseController() {
 
     @ExceptionHandler(value =
     [PostgresErrorException::class,
-        PGSQLSimpleException::class
+        PGSQLSimpleException::class,
+        NoRowAffected::class
     ])
     @ResponseBody
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
