@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*
 @ResponseBody
 class NftController: BaseController() {
 
-    @GetMapping(path = ["/algo/set"])
+    @PostMapping(path = ["/algo/set"])
     fun setNftAlgo(
         @RequestBody setNftAlgoRequest: SetNftAlgoRequest,
         @RequestHeader("sys-key") sysKey: String? = null
