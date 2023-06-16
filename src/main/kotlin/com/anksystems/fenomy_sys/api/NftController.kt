@@ -32,4 +32,14 @@ class NftController: BaseController() {
 
         return RESULT_OK
     }
+
+    @GetMapping(path = ["/algo/list"])
+    fun setNftAlgo(
+        @RequestHeader("sys-key") sysKey: String? = null
+    ): String {
+        checkAuthorization(sysKey)
+
+        return pgService.execQueryToJsonArray("select * from db.nft_algorithm;")
+    }
+
 }
