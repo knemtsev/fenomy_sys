@@ -95,6 +95,15 @@ class PGService(
         return result
     }
 
+    fun execQueryWOResult(query: String) {
+        transaction(Database.connect(ds)) {
+            val statement = connection.prepareStatement(query, false)
+
+            val res = statement.executeQuery()
+
+            log.d("RESULT = $res")
+        }
+    }
     fun screenApostrophe(string: String): String =
         string.replace("'", "''")
 
