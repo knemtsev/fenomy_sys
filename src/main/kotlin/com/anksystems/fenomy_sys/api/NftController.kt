@@ -20,9 +20,11 @@ class NftController: BaseController() {
         if(setNftAlgoRequest.id.isNullOrEmpty() || setNftAlgoRequest.payoutDate.isNullOrEmpty())
             throw InvalidRequestParametersAtLeastException("Required fields: id, payout_date")
 
-        pgService.execQueryWOResult("update db.nft_algorithm\n" +
+        val res = pgService.execUpdate("update db.nft_algorithm\n" +
                 "    set payout_date = '${setNftAlgoRequest.payoutDate}'\n" +
                 "where id='${setNftAlgoRequest.id}';")
+
+        log.d("setNftAlgo res = $res")
 
         return RESULT_OK
     }

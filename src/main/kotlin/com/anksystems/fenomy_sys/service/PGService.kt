@@ -9,7 +9,6 @@ import com.anksystems.fenomy_sys.api.model.UserIdTypes
 import com.anksystems.fenomy_sys.api.request.FenomyUserIdRequest
 import com.anksystems.fenomy_sys.api.request.GroupAddRequest
 import com.anksystems.fenomy_sys.api.request.GroupMemberRequest
-import com.anksystems.fenomy_sys.extensions.toJson
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -31,14 +30,11 @@ import java.sql.ResultSet
 import java.sql.ResultSetMetaData
 import java.sql.SQLException
 import java.sql.Timestamp
-import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.UUID
 import java.util.stream.IntStream
-import javax.lang.model.type.NullType
 
 
 @Service
@@ -95,14 +91,15 @@ class PGService(
         return result
     }
 
-    fun execQueryWOResult(query: String) {
+    fun execUpdate(query: String): Int {
+        var res = 0
         transaction(Database.connect(ds)) {
             val statement = connection.prepareStatement(query, false)
 
-            val res = statement.executeQuery()
-
-            log.d("RESULT = $res")
+            res = statement.executeUpdate()
         }
+
+        return res
     }
     fun screenApostrophe(string: String): String =
         string.replace("'", "''")
