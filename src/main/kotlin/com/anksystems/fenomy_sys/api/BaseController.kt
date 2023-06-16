@@ -5,6 +5,7 @@ import com.anksystems.fenomy_sys.api.exceptions.*
 import com.anksystems.fenomy_sys.api.response.ResultResponse
 import com.anksystems.fenomy_sys.service.LogService
 import com.anksystems.fenomy_sys.service.PGService
+import com.impossibl.postgres.jdbc.PGSQLSimpleException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus
@@ -48,11 +49,13 @@ open class BaseController() {
     }
 
     @ExceptionHandler(value =
-    [PostgresErrorException::class])
+    [PostgresErrorException::class,
+        PGSQLSimpleException::class
+    ])
     @ResponseBody
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     fun handlePostgresError(e: Exception): MutableMap<String, String> {
-        log.e("Error: ${e.message}")
+        log.e("Postgres Error: ${e.message}")
         return composeException(400, e)
     }
 
