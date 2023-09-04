@@ -5,8 +5,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TransactionRequest(
-    @SerialName("debit") val debit: String,
-    @SerialName("credit") val credit: String,
-    @SerialName("amount") val amount: Double
+    @SerialName("debit") val debit: String? = null,
+    @SerialName("credit") val credit: String? = null,
+    @SerialName("amount") val amount: Double,
+    @SerialName("currency") val currency: String? = null,
 ) {
 }

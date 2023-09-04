@@ -55,10 +55,22 @@ class PGService(
         }
     }
 
+    private val configAdmin by lazy {
+        HikariConfig().apply {
+            jdbcUrl = env.getProperty("spring.datasource.url") //props.dbUrl
+            username = env.getProperty("admin")
+            password = env.getProperty("admin")
+            driverClassName = env.getProperty("spring.datasource.driver-class-name")
+            //keepaliveTime = 60000
+        }
+    }
+
+
     private val ds by lazy {
         HikariDataSource(config)
     }
 
+    private val dsAdmin by lazy { HikariDataSource(configAdmin) }
     private val serviceScope = CoroutineScope(Dispatchers.IO)
 
 
@@ -75,9 +87,9 @@ class PGService(
 
     }
 
-    fun execQuery(query: String): String {
+    fun execQuery(query: String, dataSource: HikariDataSource = ds ): String {
         var result = ""
-        transaction(Database.connect(ds)) {
+        transaction(Database.connect(dataSource)) {
             val statement = connection.prepareStatement(query, false)
 
             val res = statement.executeQuery()
@@ -91,9 +103,9 @@ class PGService(
         return result
     }
 
-    fun execUpdate(query: String): Int {
+    fun execUpdate(query: String, dataSource: HikariDataSource = ds ): Int {
         var res = 0
-        transaction(Database.connect(ds)) {
+        transaction(Database.connect(dataSource)) {
             val statement = connection.prepareStatement(query, false)
 
             res = statement.executeUpdate()
@@ -104,9 +116,9 @@ class PGService(
     fun screenApostrophe(string: String): String =
         string.replace("'", "''")
 
-    fun execQueryToJsonArray(query: String): String {
+    fun execQueryToJsonArray(query: String, dataSource: HikariDataSource = ds ): String {
         var result = ""
-        transaction(Database.connect(ds)) {
+        transaction(Database.connect(dataSource)) {
             val statement = connection.prepareStatement(query, false)
 
             val res = statement.executeQuery()
@@ -117,9 +129,9 @@ class PGService(
         return result
     }
 
-    fun execQueryToJsonObject(query: String): String {
+    fun execQueryToJsonObject(query: String, dataSource: HikariDataSource = ds): String {
         var result = ""
-        transaction(Database.connect(ds)) {
+        transaction(Database.connect(dataSource)) {
             val statement = connection.prepareStatement(query, false)
 
             val res = statement.executeQuery()
@@ -315,6 +327,13 @@ class PGService(
     protected fun checkPostgresError(result: String) {
         if (result.startsWith("ERR-"))
             throw PostgresErrorException(result)
+    }
+
+    fun transaction(debit: String?, credit: String?, amount: Double, currency: String?): String {
+        return execQuery("SELECT api.sys_transaction('${screenApostrophe(debit ?: "")}', " +
+                "'${screenApostrophe(credit ?: "")}', $amount, " +
+                "'${screenApostrophe(currency ?: "")}');" , dsAdmin
+        )
     }
 
 }

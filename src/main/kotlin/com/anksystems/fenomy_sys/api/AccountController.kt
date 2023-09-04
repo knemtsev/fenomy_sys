@@ -22,17 +22,8 @@ class AccountController (
                     @RequestHeader("sys-key") sysKey: String?=null): String {
 
         checkAuthorization(sysKey)
-        return try {
-            val res = pgService.transaction()
-            log.d("blockchain $res $token")
-            if(res.isEmpty())
-                throw NoTokenException(token)
-             res
-        } catch (e: NoTokenException) {
-            throw e
-        } catch (e: Exception) {
-            "{"+"\"error\":"+"\""+e.message+"\"}"
-        }
+
+        return pgService.transaction(request.debit, request.credit, request.amount, request.currency)
     }
 
 }
