@@ -285,7 +285,7 @@ class PGService(
     }
 
 
-    fun getBlockchainPrefs(token: String): String {
+    fun getBlockchainPrefs(token: String?, userId: String?): String {
 //        log.d("get prefs $token")
         val res = execQuery(
             "SELECT row_to_json(sel) FROM (\n" +
@@ -295,7 +295,8 @@ class PGService(
                     "            inner join db.session s on s.userid=c.userid\n" +
                     "            inner join db.token_header th on th.session=s.code\n" +
                     "            inner join db.token t on th.id = t.header\n" +
-                    "         WHERE  t.token = '${screenApostrophe(token)}'\n" +
+                    "         WHERE  " +
+                    (if(token!=null ) "t.token = '${screenApostrophe(token)}'\n" else "c.userid = '${screenApostrophe(userId!!)}'") +
                     "         ) sel;"
         )
 //        log.d("get prefs res = $res")
