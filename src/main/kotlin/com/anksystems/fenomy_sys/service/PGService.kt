@@ -287,7 +287,8 @@ class PGService(
 
     fun getBlockchainPrefs(token: String?, userId: String?): String {
 //        log.d("get prefs $token")
-        val res = execQuery(
+        val query =
+        if(token!=null)
             "SELECT row_to_json(sel) FROM (\n" +
                     "         SELECT (substring(c.code,2,4) || '***' || substring(c.code,21,6)) as fyid, c.userid as user_id, (ext_flags & B'00000100' = B'00000100') as use_blockchain, load_blockchain, reputation, " +
                     "            (getbalance(getaccount(c.code, getcurrency('FNM'::text)))) as balance FROM db.participant_ext pe\n" +
@@ -296,9 +297,17 @@ class PGService(
                     "            inner join db.token_header th on th.session=s.code\n" +
                     "            inner join db.token t on th.id = t.header\n" +
                     "         WHERE  " +
-                    (if(token!=null ) "t.token = '${screenApostrophe(token)}'\n" else "c.userid = '${screenApostrophe(userId!!)}'") +
+                    " t.token = '${screenApostrophe(token)}'\n" +
                     "         ) sel;"
-        )
+        else
+            "SELECT row_to_json(sel) FROM (\n" +
+                    "         SELECT (substring(c.code,2,4) || '***' || substring(c.code,21,6)) as fyid, c.userid as user_id, (ext_flags & B'00000100' = B'00000100') as use_blockchain, load_blockchain, reputation, " +
+                    "            (getbalance(getaccount(c.code, getcurrency('FNM'::text)))) as balance FROM db.participant_ext pe\n" +
+                    "            inner join db.client c on c.id=pe.id\n" +
+                    "         WHERE  " +
+                    "c.userid = '${screenApostrophe(userId!!)}') sel;"
+
+        val res = execQuery(query)
 //        log.d("get prefs res = $res")
         return res
     }
