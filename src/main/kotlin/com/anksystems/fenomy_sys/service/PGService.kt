@@ -347,6 +347,8 @@ class PGService(
     }
 
     fun doDisable(transactionId: String): String {
+        val auth = execQuery("SELECT SignIn(CreateSystemOAuth2(), 'admin', 'admin');")
+        log.d("Auth result = $auth")
         return execQuery("SELECT SignIn(CreateSystemOAuth2(), 'admin', 'admin'); " +
                 "SELECT DoDisable('${screenApostrophe(transactionId)}');", dsAdmin)
     }
