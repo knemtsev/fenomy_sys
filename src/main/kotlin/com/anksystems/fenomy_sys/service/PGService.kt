@@ -58,8 +58,8 @@ class PGService(
     private val configAdmin by lazy {
         HikariConfig().apply {
             jdbcUrl = env.getProperty("spring.datasource.url") //props.dbUrl
-            username = env.getProperty("admin")
-            password = env.getProperty("admin")
+            username = "admin"
+            password = "admin"
             driverClassName = env.getProperty("spring.datasource.driver-class-name")
             //keepaliveTime = 60000
         }
