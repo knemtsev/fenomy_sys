@@ -87,7 +87,7 @@ class PGService(
 
     }
 
-    fun execQuery(query: String, dataSource: HikariDataSource = ds ): String {
+    fun execQuery(query: String, dataSource: HikariDataSource = ds): String {
         var result = ""
         transaction(Database.connect(dataSource)) {
             val statement = connection.prepareStatement(query, false)
@@ -103,7 +103,27 @@ class PGService(
         return result
     }
 
-    fun execUpdate(query: String, dataSource: HikariDataSource = ds ): Int {
+    fun execQuery(queries: List<String>, dataSource: HikariDataSource = ds): String {
+        var result = ""
+        transaction(Database.connect(dataSource)) {
+
+            queries.forEach {
+                val statement = connection.prepareStatement(it, false)
+
+                val res = statement.executeQuery()
+
+                if (res.next()) {
+                    result = res.getString(1)
+                }
+            }
+        }
+
+        checkPostgresError(result)
+        return result
+    }
+
+
+    fun execUpdate(query: String, dataSource: HikariDataSource = ds): Int {
         var res = 0
         transaction(Database.connect(dataSource)) {
             val statement = connection.prepareStatement(query, false)
@@ -113,10 +133,11 @@ class PGService(
 
         return res
     }
+
     fun screenApostrophe(string: String): String =
         string.replace("'", "''")
 
-    fun execQueryToJsonArray(query: String, dataSource: HikariDataSource = ds ): String {
+    fun execQueryToJsonArray(query: String, dataSource: HikariDataSource = ds): String {
         var result = ""
         transaction(Database.connect(dataSource)) {
             val statement = connection.prepareStatement(query, false)
@@ -288,24 +309,24 @@ class PGService(
     fun getBlockchainPrefs(token: String?, userId: String?): String {
 //        log.d("get prefs $token")
         val query =
-        if(token!=null)
-            "SELECT row_to_json(sel) FROM (\n" +
-                    "         SELECT (substring(c.code,2,4) || '***' || substring(c.code,21,6)) as fyid, c.userid as user_id, (ext_flags & B'00000100' = B'00000100') as use_blockchain, load_blockchain, reputation, " +
-                    "            (getbalance(getaccount(c.code, getcurrency('FNM'::text)))) as balance FROM db.participant_ext pe\n" +
-                    "            inner join db.client c on c.id=pe.id\n" +
-                    "            inner join db.session s on s.userid=c.userid\n" +
-                    "            inner join db.token_header th on th.session=s.code\n" +
-                    "            inner join db.token t on th.id = t.header\n" +
-                    "         WHERE  " +
-                    " t.token = '${screenApostrophe(token)}'\n" +
-                    "         ) sel;"
-        else
-            "SELECT row_to_json(sel) FROM (\n" +
-                    "         SELECT (substring(c.code,2,4) || '***' || substring(c.code,21,6)) as fyid, c.userid as user_id, (ext_flags & B'00000100' = B'00000100') as use_blockchain, load_blockchain, reputation, " +
-                    "            (getbalance(getaccount(c.code, getcurrency('FNM'::text)))) as balance FROM db.participant_ext pe\n" +
-                    "            inner join db.client c on c.id=pe.id\n" +
-                    "         WHERE  " +
-                    "c.userid = '${screenApostrophe(userId!!)}') sel;"
+            if (token != null)
+                "SELECT row_to_json(sel) FROM (\n" +
+                        "         SELECT (substring(c.code,2,4) || '***' || substring(c.code,21,6)) as fyid, c.userid as user_id, (ext_flags & B'00000100' = B'00000100') as use_blockchain, load_blockchain, reputation, " +
+                        "            (getbalance(getaccount(c.code, getcurrency('FNM'::text)))) as balance FROM db.participant_ext pe\n" +
+                        "            inner join db.client c on c.id=pe.id\n" +
+                        "            inner join db.session s on s.userid=c.userid\n" +
+                        "            inner join db.token_header th on th.session=s.code\n" +
+                        "            inner join db.token t on th.id = t.header\n" +
+                        "         WHERE  " +
+                        " t.token = '${screenApostrophe(token)}'\n" +
+                        "         ) sel;"
+            else
+                "SELECT row_to_json(sel) FROM (\n" +
+                        "         SELECT (substring(c.code,2,4) || '***' || substring(c.code,21,6)) as fyid, c.userid as user_id, (ext_flags & B'00000100' = B'00000100') as use_blockchain, load_blockchain, reputation, " +
+                        "            (getbalance(getaccount(c.code, getcurrency('FNM'::text)))) as balance FROM db.participant_ext pe\n" +
+                        "            inner join db.client c on c.id=pe.id\n" +
+                        "         WHERE  " +
+                        "c.userid = '${screenApostrophe(userId!!)}') sel;"
 
         val res = execQuery(query)
 //        log.d("get prefs res = $res")
@@ -340,16 +361,20 @@ class PGService(
     }
 
     fun transaction(debit: String?, credit: String?, amount: Double, currency: String?): String {
-        return execQuery("SELECT api.sys_transaction('${screenApostrophe(debit ?: "")}', " +
-                "'${screenApostrophe(credit ?: "")}', $amount, " +
-                "'${screenApostrophe(currency ?: "")}');" , dsAdmin
+        return execQuery(
+            "SELECT api.sys_transaction('${screenApostrophe(debit ?: "")}', " +
+                    "'${screenApostrophe(credit ?: "")}', $amount, " +
+                    "'${screenApostrophe(currency ?: "")}');", dsAdmin
         )
     }
 
     fun doDisable(transactionId: String): String {
-        val auth = execQuery("SELECT SignIn(CreateSystemOAuth2(), 'admin', 'admin');")
-        log.d("Auth result = $auth")
-        return execQuery("SELECT DoDisable('${screenApostrophe(transactionId)}');", dsAdmin)
+        return execQuery(
+            listOf(
+                "SELECT SignIn(CreateSystemOAuth2(), 'admin', 'admin');",
+                "SELECT DoDisable('${screenApostrophe(transactionId)}');"
+            ), dsAdmin
+        )
     }
 
 }
