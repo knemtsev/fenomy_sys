@@ -4,6 +4,7 @@ import com.anksystems.fenomy_sys.api.exceptions.InvalidRequestParametersAtLeastE
 import com.anksystems.fenomy_sys.api.exceptions.NoAppKeyException
 import com.anksystems.fenomy_sys.api.exceptions.NoTokenException
 import com.anksystems.fenomy_sys.api.request.BlockchainPrefsRequest
+import com.anksystems.fenomy_sys.api.request.TransactionResultRequest
 import com.anksystems.fenomy_sys.service.LogService
 import com.anksystems.fenomy_sys.service.PGService
 import org.springframework.beans.factory.annotation.Autowired
@@ -54,5 +55,15 @@ class BlockchainController (
         }
     }
 
+    @PostMapping(path = ["/transaction/result"])
+    fun transactionResult(@RequestBody transactionResult: TransactionResultRequest,
+                          @RequestHeader("sys-key") sysKey: String?=null): String
+    {
+        return if(transactionResult.success) {
+            pgService.doDisable(transactionResult.transactionId)
+        } else {
+            "{\"transaction\":\"off\"}"
+        }
+    }
 
 }

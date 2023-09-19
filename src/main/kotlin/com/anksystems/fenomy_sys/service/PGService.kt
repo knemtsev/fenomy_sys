@@ -346,4 +346,8 @@ class PGService(
         )
     }
 
+    fun doDisable(transactionId: String): String {
+        return execQuery("SELECT DoDisable('${screenApostrophe(transactionId)}');", dsAdmin)
+    }
+
 }
