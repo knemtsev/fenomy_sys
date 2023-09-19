@@ -377,4 +377,8 @@ class PGService(
         )
     }
 
+    fun doFailed(transactionId: String): String {
+        return execQuery("UPDATE TABLE db.transaction set '${screenApostrophe(transactionId)}');", ds)
+    }
+
 }
