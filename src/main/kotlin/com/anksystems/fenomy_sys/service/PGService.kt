@@ -361,10 +361,15 @@ class PGService(
     }
 
     fun transaction(debit: String?, credit: String?, amount: Double, currency: String?): String {
+        val sDebit = if(debit!=null) "'${screenApostrophe(debit)}'" else "NULL"
+        val sCredit = if(credit!=null) "'${screenApostrophe(credit)}'" else "NULL"
+        val sCurrency = if(currency!=null) "'${screenApostrophe(currency)}'" else "NULL"
+
         return execQuery(
-            "SELECT api.sys_transaction('${screenApostrophe(debit ?: "")}', " +
-                    "'${screenApostrophe(credit ?: "")}', $amount, " +
-                    "'${screenApostrophe(currency ?: "")}');", dsAdmin
+            listOf(
+                "SELECT SignIn(CreateSystemOAuth2(), 'admin', 'admin');",
+                "SELECT api.sys_transaction($sDebit, $sCredit, $amount, $sCurrency );"
+            ), dsAdmin
         )
     }
 
