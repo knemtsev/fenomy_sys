@@ -23,7 +23,11 @@ class AccountController (
 
         checkAuthorization(sysKey)
 
-        return pgService.transaction(request.debit, request.credit, request.amount, request.currency)
+        val res = pgService.transaction(request.debit, request.credit, request.amount, request.currency)
+
+        log.d("/transaction $request $res")
+
+        return res
     }
 
 }
