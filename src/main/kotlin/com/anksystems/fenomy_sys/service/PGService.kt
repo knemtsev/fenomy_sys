@@ -184,6 +184,7 @@ class PGService(
                 .also { if (it.isNotEmpty()) groupCache[groupFenomyId] = it }
     }
 
+/*
     fun sendPushToGroup(groupFenomyId: String, pushData: PushData, subject: String, content: String) {
         Database.connect(ds)
         transaction {
@@ -220,6 +221,7 @@ class PGService(
             }
         }
     }
+*/
 
     fun sendPushToGroupByTopic(groupFenomyId: String, pushData: PushData, subject: String, content: String) {
         Database.connect(ds)
@@ -385,6 +387,42 @@ class PGService(
 
     fun doFailed(transactionId: String): String {
         return execQuery("UPDATE TABLE db.transaction set '${screenApostrophe(transactionId)}');", ds)
+    }
+
+    fun sendPushToUser(userId: String, pushData: PushData, priority: String = "normal", subject: String = "", content: String = "") {
+
+        transaction(Database.connect(ds)) {
+            val statement = connection.prepareStatement(
+                "select d.address as address from db.device d\n" +
+                        "    inner join db.client c on c.id = d.client\n" +
+                        "where\n" +
+                        "    c.userid='${screenApostrophe(userId)}'\n" +
+                        "    and d.address is not null\n" +
+                        ";", false
+            )
+
+            val addressSet = statement.executeQuery()
+
+            val addressList: MutableList<String> = mutableListOf()
+            while (addressSet.next()) {
+                addressList.add(addressSet.getString("address"))
+            }
+
+            if(addressList.isNotEmpty()) {
+                PushTable.batchInsert(addressList) { address ->
+                    this[PushTable.address] = address
+                    this[PushTable.subject] = subject
+                    this[PushTable.content] = content
+                    this[PushTable.data] = Json.encodeToString(pushData)
+                    this[PushTable.id] = UUID.randomUUID()
+                    this[PushTable.status] = "new"
+                    this[PushTable.cdate] = ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("UTC")).toLocalDateTime()
+                    this[PushTable.udate] = ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("UTC")).toLocalDateTime()
+                    this[PushTable.priority] = priority
+                    this[PushTable.collapseKey] = null
+                }
+            }
+        }
     }
 
 }

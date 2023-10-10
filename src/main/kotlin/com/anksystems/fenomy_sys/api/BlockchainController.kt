@@ -1,16 +1,14 @@
 package com.anksystems.fenomy_sys.api
 
 import com.anksystems.fenomy_sys.api.exceptions.InvalidRequestParametersAtLeastException
-import com.anksystems.fenomy_sys.api.exceptions.NoAppKeyException
 import com.anksystems.fenomy_sys.api.exceptions.NoTokenException
+import com.anksystems.fenomy_sys.api.model.PushData
+import com.anksystems.fenomy_sys.api.request.BlockMembersRequest
 import com.anksystems.fenomy_sys.api.request.BlockchainPrefsRequest
+import com.anksystems.fenomy_sys.api.request.BlocksAuthorRequest
 import com.anksystems.fenomy_sys.api.request.TransactionResultRequest
-import com.anksystems.fenomy_sys.service.LogService
-import com.anksystems.fenomy_sys.service.PGService
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
+import com.anksystems.fenomy_sys.api.response.SuccessResponse
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
 
 
 @RestController
@@ -65,5 +63,42 @@ class BlockchainController (
             "{\"transaction\":\"off\"}"
         }
     }
+
+    @PostMapping(path = ["/blocks/confirm/author"])
+    fun blocksConfirmAuthor(@RequestBody blocksAuthor: BlocksAuthorRequest): SuccessResponse {
+        blocksAuthor.blocks.forEach {
+            val pushData = PushData(
+                type = "blockchain",
+                action = "confirm_author",
+                body = "",
+                objectX = it.hashId,
+                participant = "",
+                title = "",
+                groupFenomyId = ""
+            )
+            pgService.sendPushToUser(it.userId, pushData, "high")
+        }
+
+        return SuccessResponse(true)
+    }
+
+    @PostMapping(path = ["/blocks/confirm/member"])
+    fun blocksConfirmAuthor(@RequestBody blockMembers: BlockMembersRequest): SuccessResponse {
+        blockMembers.userIds.forEach {
+            val pushData = PushData(
+                type = "blockchain",
+                action = "confirm_member",
+                body = "",
+                objectX = blockMembers.hashId,
+                participant = "",
+                title = "",
+                groupFenomyId = ""
+            )
+            pgService.sendPushToUser(it, pushData, "high")
+        }
+
+        return SuccessResponse(true)
+    }
+
 
 }
