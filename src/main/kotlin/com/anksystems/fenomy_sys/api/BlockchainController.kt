@@ -72,8 +72,8 @@ class BlockchainController (
         checkAuthorization(sysKey)
         blocksAuthor.blocks.forEach {
             val pushData = PushData(
-                type = "blockchain",
-                action = "confirm_author",
+                type = "confirmation.blockchain",
+                action = "confirm_own_block",
                 body = "",
                 objectX = it.hashId,
                 participant = "",
@@ -92,8 +92,8 @@ class BlockchainController (
         checkAuthorization(sysKey)
         blockMembers.userIds.forEach {
             val pushData = PushData(
-                type = "blockchain",
-                action = "confirm_member",
+                type = "confirmation.blockchain",
+                action = "calc_hash",
                 body = blockMembers.hashPrev+","+blockMembers.hashSource,
                 objectX = blockMembers.hashId,
                 participant = "",
