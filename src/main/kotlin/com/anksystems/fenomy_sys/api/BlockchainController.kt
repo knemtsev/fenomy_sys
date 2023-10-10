@@ -57,6 +57,7 @@ class BlockchainController (
     fun transactionResult(@RequestBody transactionResult: TransactionResultRequest,
                           @RequestHeader("sys-key") sysKey: String?=null): String
     {
+        checkAuthorization(sysKey)
         return if(transactionResult.success) {
             pgService.doDisable(transactionResult.transactionId)
         } else {
@@ -65,7 +66,10 @@ class BlockchainController (
     }
 
     @PostMapping(path = ["/blocks/confirm/author"])
-    fun blocksConfirmAuthor(@RequestBody blocksAuthor: BlocksAuthorRequest): SuccessResponse {
+    fun blocksConfirmAuthor(@RequestBody blocksAuthor: BlocksAuthorRequest,
+        @RequestHeader("sys-key") sysKey: String?=null
+    ): SuccessResponse {
+        checkAuthorization(sysKey)
         blocksAuthor.blocks.forEach {
             val pushData = PushData(
                 type = "blockchain",
@@ -83,7 +87,9 @@ class BlockchainController (
     }
 
     @PostMapping(path = ["/blocks/confirm/member"])
-    fun blocksConfirmAuthor(@RequestBody blockMembers: BlockMembersRequest): SuccessResponse {
+    fun blocksConfirmMember(@RequestBody blockMembers: BlockMembersRequest,
+                            @RequestHeader("sys-key") sysKey: String?=null): SuccessResponse {
+        checkAuthorization(sysKey)
         blockMembers.userIds.forEach {
             val pushData = PushData(
                 type = "blockchain",
