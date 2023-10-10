@@ -88,7 +88,7 @@ class BlockchainController (
             val pushData = PushData(
                 type = "blockchain",
                 action = "confirm_member",
-                body = "",
+                body = blockMembers.hashPrev+","+blockMembers.hashSource,
                 objectX = blockMembers.hashId,
                 participant = "",
                 title = "",
