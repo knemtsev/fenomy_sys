@@ -70,6 +70,9 @@ class BlockchainController (
         @RequestHeader("sys-key") sysKey: String?=null
     ): SuccessResponse {
         checkAuthorization(sysKey)
+
+        log.d("bc confirmation input = $blocksAuthor")
+
         blocksAuthor.blocks.forEach {
             val pushData = PushData(
                 type = "confirmation.blockchain",
@@ -90,6 +93,9 @@ class BlockchainController (
     fun blocksConfirmMember(@RequestBody blockMembers: BlockMembersRequest,
                             @RequestHeader("sys-key") sysKey: String?=null): SuccessResponse {
         checkAuthorization(sysKey)
+
+        log.d("bc confirmation input = $blockMembers")
+
         blockMembers.userIds.forEach {
             val pushData = PushData(
                 type = "confirmation.blockchain",
