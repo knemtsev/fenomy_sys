@@ -4,12 +4,12 @@ import kotlinx.serialization.SerialName
 
 @kotlinx.serialization.Serializable
 data class BlockMembersRequest(
-    @SerialName("hash_id")
-    val hashId : String,
-    @SerialName("hash_prev")
-    val hashPrev: String,
-    @SerialName("hash_source")
-    val hashSource: String,
+    @SerialName("block_id")
+    val blockId : String,
+    @SerialName("prev_hash")
+    val prevHash: String,
+    @SerialName("source_hash")
+    val sourceHash: String,
     @SerialName("user_ids")
     val userIds: List<String>
 )

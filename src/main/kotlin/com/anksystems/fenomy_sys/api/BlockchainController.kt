@@ -75,7 +75,7 @@ class BlockchainController (
                 type = "confirmation.blockchain",
                 action = "confirm_own_block",
                 body = "",
-                objectX = it.hashId,
+                objectX = it.blockId,
                 participant = "",
                 title = "",
                 groupFenomyId = ""
@@ -94,8 +94,8 @@ class BlockchainController (
             val pushData = PushData(
                 type = "confirmation.blockchain",
                 action = "calc_hash",
-                body = blockMembers.hashPrev+","+blockMembers.hashSource,
-                objectX = blockMembers.hashId,
+                body = blockMembers.prevHash+","+blockMembers.sourceHash,
+                objectX = blockMembers.blockId,
                 participant = "",
                 title = "",
                 groupFenomyId = ""
