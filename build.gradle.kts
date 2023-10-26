@@ -6,12 +6,12 @@ import java.util.Properties
 
 plugins {
     application
-    id("org.springframework.boot") version "3.0.5"
-    id("io.spring.dependency-management") version "1.0.15.RELEASE"
-    kotlin("jvm") version "1.7.22"
-    kotlin("plugin.spring") version "1.7.22"
-    kotlin("plugin.serialization") version "1.7.22"
-    kotlin("kapt") version "1.7.22"
+    id("org.springframework.boot") version "3.1.5"
+    id("io.spring.dependency-management") version "1.1.3"
+    kotlin("jvm") version "1.8.22"
+    kotlin("plugin.spring") version "1.8.22"
+    kotlin("plugin.serialization") version "1.8.22"
+    kotlin("kapt") version "1.8.22"
 }
 
 application {
@@ -30,7 +30,6 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
-    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-logging")
 //    implementation("org.springframework.boot:spring-boot-starter-security")
 
@@ -41,7 +40,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
 
-    val exposedVer = "0.40.1"
+    val exposedVer = "0.44.0"
     implementation("org.jetbrains.exposed:exposed-core:$exposedVer")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVer")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVer")
@@ -69,6 +68,7 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
 tasks.bootJar {
     launchScript()
 }
