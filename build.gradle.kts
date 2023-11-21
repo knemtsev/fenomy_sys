@@ -77,8 +77,8 @@ tasks.create("jarPath") {
     println("fenomy_sys-$version.jar")
 }
 
-val generatedVersionDir = "$buildDir/generated-version"
-val resourceDir = "$buildDir/resources/main"
+val generatedVersionDir = "${layout.buildDirectory}/generated-version"
+val resourceDir = "${layout.buildDirectory}/resources/main"
 val versionProperties = "version.properties"
 
 sourceSets {
