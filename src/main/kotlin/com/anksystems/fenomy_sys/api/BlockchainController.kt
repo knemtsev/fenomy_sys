@@ -3,11 +3,9 @@ package com.anksystems.fenomy_sys.api
 import com.anksystems.fenomy_sys.api.exceptions.InvalidRequestParametersAtLeastException
 import com.anksystems.fenomy_sys.api.exceptions.NoTokenException
 import com.anksystems.fenomy_sys.api.model.PushData
-import com.anksystems.fenomy_sys.api.request.BlockMembersRequest
-import com.anksystems.fenomy_sys.api.request.BlockchainPrefsRequest
-import com.anksystems.fenomy_sys.api.request.BlocksAuthorRequest
-import com.anksystems.fenomy_sys.api.request.TransactionResultRequest
+import com.anksystems.fenomy_sys.api.request.*
 import com.anksystems.fenomy_sys.api.response.SuccessResponse
+import org.springframework.boot.autoconfigure.security.saml2.Saml2RelyingPartyProperties.AssertingParty.Verification
 import org.springframework.web.bind.annotation.*
 
 
@@ -111,5 +109,29 @@ class BlockchainController (
 
         return SuccessResponse(true)
     }
+
+    @PostMapping(path = ["/verification"])
+    fun setVerification(@RequestBody verification: SetVerificationRequest,
+                        @RequestHeader("sys-key") sysKey: String?=null): SuccessResponse {
+        checkAuthorization(sysKey)
+
+        log.d("Set verification $verification")
+
+        pgService.execUpdate("update db.participant_ext set verification_id='${pgService.screenApostrophe(verification.verificationId)}' where id=getclient('${pgService.screenApostrophe(verification.fyid)}');")
+
+        return SuccessResponse(true)
+    }
+
+
+    @GetMapping(path = ["/verification/{fyid}"])
+    fun getVerification(@PathVariable fyid: String,
+                        @RequestHeader("sys-key") sysKey: String?=null): String {
+        checkAuthorization(sysKey)
+
+        log.d("Get verification $fyid")
+
+        return pgService.execQueryToJsonObject("select verification_id from db.participant_ext where id=getclient('${pgService.screenApostrophe(fyid)}');")
+    }
+
 
 }
