@@ -27,6 +27,7 @@ class ClientController : BaseController() {
     ): String {
         checkAuthorization(sysKey)
 
+        log.d("fyIds=${fyids?.joinToString("|") { it }}")
         return getData(
             fyid = fyid,
             groupFyid = groupFyid,
@@ -97,7 +98,7 @@ class ClientController : BaseController() {
                         ";"
             )
         else if (fyIds != null)
-            pgService.execQueryToJsonObject(
+            pgService.execQueryToJsonArray(
                 "select $fields " +
                         "from db.profile p\n" +
                         "inner join db.client c on c.userid=p.userid " +
