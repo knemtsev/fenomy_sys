@@ -8,6 +8,7 @@ import java.time.ZonedDateTime
 class GroupRequest(
     @SerialName("fyid") val fyid: String? = null,
     @SerialName("group_fyid") val groupFyid: String? = null,
+    @SerialName("fyids") val fyids: List<String>? = null,
 ) : BaseRequest() {
 
 
