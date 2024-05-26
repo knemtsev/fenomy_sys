@@ -4,6 +4,7 @@ import com.anksystems.fenomy_sys.api.exceptions.InvalidRequestParameterException
 import com.anksystems.fenomy_sys.api.exceptions.InvalidRequestParametersAtLeastException
 import com.anksystems.fenomy_sys.api.request.BaseRequest
 import com.anksystems.fenomy_sys.api.request.GroupRequest
+import com.anksystems.fenomy_sys.api.request.SecretRequest
 import org.springframework.web.bind.annotation.*
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -193,6 +194,33 @@ class ClientController : BaseController() {
 
         return res
     }
+
+    @CrossOrigin(/*origins = ["https://localhost:3000"]*/)
+    @PostMapping(path = ["/secret/recovery"])
+    fun getSecretRecovery(
+        @RequestBody secretRequest: SecretRequest,
+        @RequestHeader("sys-key") sysKey: String? = null
+    ): String {
+
+        checkAuthorization(sysKey)
+
+        return pgService.execQuery("select api.recovery_secret('${pgService.screenApostrophe(secretRequest.email)}');")
+
+    }
+
+    @CrossOrigin(/*origins = ["https://localhost:3000"]*/)
+    @GetMapping(path = ["/secret/recovery/{ticket}"])
+    fun getSecretByTicket(
+        @PathVariable ticket: String,
+        @RequestHeader("sys-key") sysKey: String? = null
+    ): String {
+
+        checkAuthorization(sysKey)
+
+        return pgService.execQuery("select api.get_new_secret_by_ticket('${pgService.screenApostrophe(ticket)}');")
+
+    }
+
 
 }
 
