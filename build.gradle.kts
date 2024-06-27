@@ -1,7 +1,6 @@
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.FileOutputStream
-import java.util.Properties
+import java.util.*
 
 
 plugins {
@@ -40,7 +39,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
 
-    val exposedVer = "0.44.0"
+    val exposedVer = "0.52.0"
     implementation("org.jetbrains.exposed:exposed-core:$exposedVer")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVer")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVer")
