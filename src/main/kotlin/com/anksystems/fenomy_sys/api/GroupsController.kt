@@ -1,25 +1,14 @@
 package com.anksystems.fenomy_sys.api
 
-import com.anksystems.fenomy_sys.api.exceptions.NoAppKeyException
 import com.anksystems.fenomy_sys.api.model.PushData
-import com.anksystems.fenomy_sys.api.model.UserId
-import com.anksystems.fenomy_sys.api.model.UserIdTypes
-import com.anksystems.fenomy_sys.api.request.FenomyUserIdRequest
 import com.anksystems.fenomy_sys.api.request.GroupAddRequest
 import com.anksystems.fenomy_sys.api.request.GroupMemberRequest
 import com.anksystems.fenomy_sys.api.request.SendGroupPushRequest
 import com.anksystems.fenomy_sys.api.response.GroupAddResponse
 import com.anksystems.fenomy_sys.api.response.ResultResponse
-import com.anksystems.fenomy_sys.extensions.toJson
-import com.anksystems.fenomy_sys.service.LogService
-import com.anksystems.fenomy_sys.service.PGService
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatusCode
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
 import java.time.Instant
 
 @RestController
@@ -33,6 +22,15 @@ class GroupsController() : BaseController() {
     ): String {
         checkAuthorization(sysKey)
         return Json.encodeToString(GroupAddResponse(fenomyId = pgService.newGroup(request)))
+    }
+
+    @PostMapping("/object")
+    fun objectAdd(
+        @RequestBody request: GroupAddRequest,
+        @RequestHeader("sys-key") sysKey: String? = null
+    ): String {
+        checkAuthorization(sysKey)
+        return Json.encodeToString(GroupAddResponse(fenomyId = pgService.newObject(request)))
     }
 
     @PostMapping("/members")

@@ -340,6 +340,10 @@ class PGService(
         return execQuery("select api.groups_new_group('${screenApostrophe(groupAddRequest.name)}', ' ');")
     }
 
+    fun newObject(groupAddRequest: GroupAddRequest): String {
+        return execQuery("select api.groups_new_object ('${screenApostrophe(groupAddRequest.name)}', ' ');")
+    }
+
     fun addGroupMember(request: GroupMemberRequest): String {
         return execQuery(
             "select api.groups_add_member('${screenApostrophe(request.groupFenomyId)}', '${
