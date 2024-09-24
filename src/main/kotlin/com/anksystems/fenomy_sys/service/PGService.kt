@@ -368,9 +368,9 @@ class PGService(
     }
 
     fun transaction(debit: String?, credit: String?, amount: Double, currency: String?): String {
-        val sDebit = if(debit!=null) "'${screenApostrophe(debit)}'" else "NULL"
-        val sCredit = if(credit!=null) "'${screenApostrophe(credit)}'" else "NULL"
-        val sCurrency = if(currency!=null) "'${screenApostrophe(currency)}'" else "NULL"
+        val sDebit = if (debit != null) "'${screenApostrophe(debit)}'" else "NULL"
+        val sCredit = if (credit != null) "'${screenApostrophe(credit)}'" else "NULL"
+        val sCurrency = if (currency != null) "'${screenApostrophe(currency)}'" else "NULL"
 
         return execQuery(
             listOf(
@@ -393,7 +393,13 @@ class PGService(
         return execQuery("UPDATE TABLE db.transaction set '${screenApostrophe(transactionId)}');", ds)
     }
 
-    fun sendPushToUser(userId: String, pushData: PushData, priority: String = "normal", subject: String = "", content: String = "") {
+    fun sendPushToUser(
+        userId: String,
+        pushData: PushData,
+        priority: String = "normal",
+        subject: String = "",
+        content: String = ""
+    ) {
 
         transaction(Database.connect(ds)) {
             val statement = connection.prepareStatement(
@@ -412,7 +418,7 @@ class PGService(
                 addressList.add(addressSet.getString("address"))
             }
 
-            if(addressList.isNotEmpty()) {
+            if (addressList.isNotEmpty()) {
                 PushTable.batchInsert(addressList) { address ->
                     this[PushTable.address] = address
                     this[PushTable.subject] = subject
@@ -429,4 +435,12 @@ class PGService(
         }
     }
 
+    fun getBalance(fyid: String) =
+        execQueryToJsonObject(
+            "select a.code as fyid, ROUND(b.amount,2) as balance from db.balance b inner join db.account a on b.account = a.id where b.validtodate>now() and b.type=1 and a.code='${
+                screenApostrophe(
+                    fyid
+                )
+            }' and a.currency='61bacbdb-56bb-413c-88d6-17bf623441cf';"
+        )
 }
