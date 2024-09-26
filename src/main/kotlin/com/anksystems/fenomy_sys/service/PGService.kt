@@ -144,7 +144,7 @@ class PGService(
 
             val res = statement.executeQuery()
 
-            checkPostgresError(res.getString(1))
+            checkPostgresError(res)
 
             result = resultSetToJsonArray(res).toString()
 
@@ -159,7 +159,7 @@ class PGService(
 
             val res = statement.executeQuery()
 
-            checkPostgresError(res.getString(1))
+            checkPostgresError(res)
 
             result = resultSetRowToJsonObject(res).toString()
 
