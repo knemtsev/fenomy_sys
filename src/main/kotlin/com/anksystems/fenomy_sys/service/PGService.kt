@@ -371,6 +371,17 @@ class PGService(
             throw PostgresErrorException(result)
     }
 
+    protected fun checkPostgresError(result: ResultSet) {
+        try {
+            val res = result.getString(1)
+            if (res.startsWith("ERR-"))
+                throw PostgresErrorException(res)
+        } catch (e: Exception) {
+            throw PostgresErrorException("No result")
+        }
+    }
+
+
     fun transaction(debit: String?, credit: String?, amount: Double, currency: String?): String {
         val sDebit = if (debit != null) "'${screenApostrophe(debit)}'" else "NULL"
         val sCredit = if (credit != null) "'${screenApostrophe(credit)}'" else "NULL"
