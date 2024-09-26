@@ -372,13 +372,11 @@ class PGService(
     }
 
     protected fun checkPostgresError(result: ResultSet) {
-        try {
-            val res = result.getString(1)
-            if (res.startsWith("ERR-"))
-                throw PostgresErrorException(res)
-        } catch (e: Exception) {
+        if (result.row == 0)
             throw PostgresErrorException("No result")
-        }
+        val res = result.getString(1)
+        if (res.startsWith("ERR-"))
+            throw PostgresErrorException(res)
     }
 
 
