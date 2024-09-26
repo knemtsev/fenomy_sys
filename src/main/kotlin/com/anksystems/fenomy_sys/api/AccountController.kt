@@ -52,6 +52,9 @@ class AccountController(
         @RequestBody req: SetFNMIdRequest,
         @RequestHeader("sys-key") sysKey: String? = null
     ): ResultResponse {
+        checkAuthorization(sysKey)
+
+        log.d("fyid=${req.fyid} fnm_id=${req.fnmId}")
 
         if (req.fyid != null)
             pgService.setFNMIdByFyId(req.fyid, req.fnmId)
