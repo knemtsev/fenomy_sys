@@ -372,8 +372,10 @@ class PGService(
     }
 
     protected fun checkPostgresError(result: ResultSet) {
+        result.last()
         if (result.row == 0)
             throw PostgresErrorException("No result")
+        result.first()
         val res = result.getString(1)
         if (res.startsWith("ERR-"))
             throw PostgresErrorException(res)
