@@ -1,16 +1,7 @@
 package com.anksystems.fenomy_sys.api
 
-import com.anksystems.fenomy_sys.api.exceptions.NoAppKeyException
-import com.anksystems.fenomy_sys.api.exceptions.NoTokenException
 import com.anksystems.fenomy_sys.api.request.TransactionRequest
-import com.anksystems.fenomy_sys.api.response.BalanceResponse
-import com.anksystems.fenomy_sys.service.LogService
-import com.anksystems.fenomy_sys.service.PGService
-import kotlinx.serialization.json.JsonObject
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
 
 
 @RestController
@@ -40,8 +31,12 @@ class AccountController(
         @RequestHeader("sys-key") sysKey: String? = null
     ): String {
         checkAuthorization(sysKey)
+        var res: String? = ""
 
-        val res = pgService.getBalance(fenomyId)
+        if(fenomyId.startsWith("fy"))
+            res = pgService.getBalanceByFyId(fenomyId)
+        else
+            res = pgService.getBalanceByUserId(fenomyId)
 
         log.d("/balance/fnm/${fenomyId} $res")
 

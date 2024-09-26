@@ -144,6 +144,8 @@ class PGService(
 
             val res = statement.executeQuery()
 
+            checkPostgresError(res.getString(1))
+
             result = resultSetToJsonArray(res).toString()
 
         }
@@ -156,6 +158,8 @@ class PGService(
             val statement = connection.prepareStatement(query, false)
 
             val res = statement.executeQuery()
+
+            checkPostgresError(res.getString(1))
 
             result = resultSetRowToJsonObject(res).toString()
 
@@ -435,7 +439,7 @@ class PGService(
         }
     }
 
-    fun getBalance(fyid: String) =
+    fun getBalanceByFyId(fyid: String) =
         execQueryToJsonObject(
             "select a.code as fyid, ROUND(b.amount,2) as balance from db.balance b inner join db.account a on b.account = a.id where b.validtodate>now() and b.type=1 and a.code='${
                 screenApostrophe(
@@ -443,4 +447,16 @@ class PGService(
                 )
             }' and a.currency='61bacbdb-56bb-413c-88d6-17bf623441cf';"
         )
+
+    fun getBalanceByUserId(userId: String) =
+        execQueryToJsonObject(
+            "select a.code as fyid, ROUND(b.amount,2) as balance from db.balance b" +
+                    "    inner join db.account a on b.account = a.id" +
+                    "    inner join db.client c on a.client = c.id" +
+                    "    where b.validtodate>now() and" +
+                    "          b.type=1 and" +
+                    "          c.userid='${screenApostrophe(userId)}' and" +
+                    "          a.currency='61bacbdb-56bb-413c-88d6-17bf623441cf';"
+        )
+
 }
