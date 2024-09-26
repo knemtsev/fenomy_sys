@@ -470,4 +470,14 @@ class PGService(
                     "          a.currency='61bacbdb-56bb-413c-88d6-17bf623441cf';"
         )
 
+    fun setFNMIdByFyId(fyid: String, fnm_id: String) {
+        execUpdate("update db.participant_ext set fnm_id='${screenApostrophe(fnm_id)}' " +
+                "where id=getclient('${screenApostrophe(fyid)}');")
+    }
+
+    fun setFNMIdByUserId(userId: String, fnm_id: String) {
+        execUpdate("update db.participant_ext set fnm_id='${screenApostrophe(fnm_id)}' " +
+                "where id=(select id from db.client where userid='${screenApostrophe(userId)}');")
+    }
+
 }
