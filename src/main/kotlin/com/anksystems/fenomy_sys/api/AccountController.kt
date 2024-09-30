@@ -42,7 +42,7 @@ class AccountController(
         else
             res = pgService.getBalanceByUserId(fenomyId)
 
-        log.d("/balance/fnm/${fenomyId} $res")
+        log.d("Get balance /balance/fnm/${fenomyId} $res")
 
         return res
     }
@@ -54,7 +54,7 @@ class AccountController(
     ): ResultResponse {
         checkAuthorization(sysKey)
 
-        log.d("fyid=${req.fyid} fnm_id=${req.fnmId}")
+        log.d("Set fnm_id fyid=${req.fyid} fnm_id=${req.fnmId}")
 
         if (req.fyid != null)
             pgService.setFNMIdByFyId(req.fyid, req.fnmId)
