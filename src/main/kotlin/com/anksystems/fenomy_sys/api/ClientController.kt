@@ -119,7 +119,7 @@ class ClientController : BaseController() {
         else
             throw InvalidRequestParametersAtLeastException("fyid, group_fyid")
 
-        log.d("GET_DATA $groupFyid $afterTime $res")
+        log.d("GET_DATA $groupFyid $afterTime")
 
         return res;
     }
