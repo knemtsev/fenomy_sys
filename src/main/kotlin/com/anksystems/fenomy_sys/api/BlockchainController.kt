@@ -73,7 +73,7 @@ class BlockchainController (
 
         blocksAuthor.blocks.forEach {
             val pushData = PushData(
-                type = "confirmation.blockchain",
+                type = "blockchain.confirmation",
                 action = "confirm_own_block",
                 body = "",
                 objectX = it.blockId,
@@ -96,7 +96,7 @@ class BlockchainController (
 
         blockMembers.userIds.forEach {
             val pushData = PushData(
-                type = "confirmation.blockchain",
+                type = "blockchain.confirmation",
                 action = "calc_hash",
                 body = blockMembers.prevHash+","+blockMembers.sourceHash,
                 objectX = blockMembers.blockId,

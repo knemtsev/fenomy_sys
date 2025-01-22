@@ -60,7 +60,7 @@ class GroupsController() : BaseController() {
         checkAuthorization(sysKey)
 
         val pushData = PushData(
-            type = request.type + ".groups",
+            type = "groups." + request.type,
             action = request.action,
             body = "",
             title = "",
